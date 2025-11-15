@@ -19,7 +19,7 @@ from django.urls import path
 from django.http import HttpResponse
 
 def home(request):
-    return HttpResponse("<h1>Deploy works 🎉</h1><p>If you see this, the pipeline is good.</p>")
+    return HttpResponse("<h1>Deploy seems to work </h1><p>If you see this, the pipeline is good.</p>")
 
 urlpatterns = [
     path("", home),
