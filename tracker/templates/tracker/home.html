@@ -14,6 +14,9 @@
     <div class="card-glass p-3 h-100 d-flex flex-column justify-content-center">
       <p class="mb-1 text-soft">Today’s migraine risk (demo)</p>
       <div class="metric-big mb-1">32<span class="fs-5">%</span></div>
+        <div class="metric-big mb-1">32<span class="fs-5">%</span></div>
+        <div class="metric-big mb-1">32<span class="fs-5">%</span></div>
+        <div class="metric-big mb-1">32<span class="fs-5">%</span></div>
       <p class="mb-0 small text-soft">This is placeholder data – later this will use your personal model.</p>
     </div>
   </div>
@@ -60,15 +63,7 @@
       data: {
         labels: labels,
         datasets: [
-          {
-            label: "Sleep (h)",
-            data: sleepHours,
-            yAxisID: "y",
-            backgroundColor: "#3282B8",
-            borderColor: "#3282B8",
-            borderWidth: 1,
-          },
-          {
+            {
             label: "Migraine intensity",
             data: migraineIntensity,
             type: "line",
@@ -78,6 +73,14 @@
             tension: 0.3,
             pointRadius: 3,
             pointBackgroundColor: "#BBE1FA",
+          },
+          {
+            label: "Sleep (h)",
+            data: sleepHours,
+            yAxisID: "y",
+            backgroundColor: "#3282B8",
+            borderColor: "#3282B8",
+            borderWidth: 1,
           }
         ]
       },

@@ -18,7 +18,7 @@
 
   <link rel="stylesheet" href="{% static 'tracker/css/main.css' %}">
 </head>
-<body class="bg-dark text-light d-flex flex-column" style="min-height: 100vh;">
+<body class="bg-dark text-light d-flex flex-column" style="min-height: 100vh; overflow-x: hidden" >
 
 <header class="py-3 px-3">
   <h1 class="h4 mb-0">Migraine Tracker</h1>
@@ -29,22 +29,24 @@
 </main>
 
 <!-- Bottom navigation bar -->
-<nav class="navbar navbar-dark bottom-nav fixed-bottom">
-  <div class="container d-flex justify-content-around align-items-center">
+<nav class="bottom-nav sticky-bottom">
+  <div class="bottom-nav-inner">
     {% with active=active_tab|default:"home" %}
 
-      <a class="text-center nav-icon {% if active == 'home' %}nav-icon-active{% endif %}"
+      <!-- Home icon -->
+      <a class="nav-icon {% if active == 'home' %}nav-icon-active{% endif %}"
          href="{% url 'tracker:home' %}">
         <i class="bi bi-house-fill fs-4"></i>
       </a>
 
-      <!-- Big floating plus button -->
-      <a class="btn rounded-circle shadow-lg nav-plus-btn"
+      <!-- Big floating plus button in the middle -->
+      <a class="nav-plus-btn"
          href="{% url 'tracker:log' %}">
         <i class="bi bi-plus-lg"></i>
       </a>
 
-      <a class="text-center nav-icon {% if active == 'stats' %}nav-icon-active{% endif %}"
+      <!-- Stats icon (for future stats page) -->
+      <a class="nav-icon {% if active == 'stats' %}nav-icon-active{% endif %}"
          href="#">
         <i class="bi bi-bar-chart-fill fs-4"></i>
       </a>
