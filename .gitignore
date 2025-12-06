@@ -16,3 +16,9 @@ media/
 # VS Code / PyCharm
 .vscode/
 .idea/
+
+# Local Django settings
+migraine_site/settings_local.py
+
+# SQLite (local dev DB)
+db.sqlite3

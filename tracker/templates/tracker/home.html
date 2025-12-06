@@ -1,0 +1,148 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}Overview{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <p class="mb-1 text-soft">Welcome back,</p>
+  <h2 class="h3">{{ user_name|default:"friend" }}</h2>
+</div>
+
+<div class="row g-3 mb-3">
+  <!-- Today's status / wow box -->
+  <div class="col-12 col-md-5">
+    <div class="card-glass p-3 h-100 d-flex flex-column justify-content-center">
+      <p class="mb-1 text-soft">Today’s migraine risk (demo)</p>
+      <div class="metric-big mb-1">32<span class="fs-5">%</span></div>
+      <p class="mb-0 small text-soft">This is placeholder data – later this will use your personal model.</p>
+    </div>
+  </div>
+
+  <!-- Sleep vs migraine chart -->
+  <div class="col-12 col-md-7">
+    <div class="card-glass p-3 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <p class="mb-0 text-soft">Last 7 days</p>
+        <span class="small text-soft">Sleep &amp; migraines</span>
+      </div>
+      <canvas id="sleepMigraineChart" height="120"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <!-- Weather / pressure chart -->
+  <div class="col-12">
+    <div class="card-glass p-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <p class="mb-0 text-soft">Pressure trend</p>
+        <span class="small text-soft">Past days (demo)</span>
+      </div>
+      <canvas id="pressureChart" height="120"></canvas>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Data from Django context (placeholder for now)
+  const sleepHours = {{ sleep_hours|safe }};
+  const migraineIntensity = {{ migraine_intensity|safe }};
+  const pressure = {{ pressure|safe }};
+  const labels = ["-6d", "-5d", "-4d", "-3d", "-2d", "-1d", "Today"];
+
+    // Sleep vs migraine chart
+  const ctx1 = document.getElementById("sleepMigraineChart");
+  if (ctx1) {
+    new Chart(ctx1, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Sleep (h)",
+            data: sleepHours,
+            yAxisID: "y",
+            backgroundColor: "#3282B8",
+            borderColor: "#3282B8",
+            borderWidth: 1,
+          },
+          {
+            label: "Migraine intensity",
+            data: migraineIntensity,
+            type: "line",
+            yAxisID: "y1",
+            borderColor: "#BBE1FA",
+            backgroundColor: "rgba(187, 225, 250, 0.2)",
+            tension: 0.3,
+            pointRadius: 3,
+            pointBackgroundColor: "#BBE1FA",
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: { color: "#BBE1FA" }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: "#BBE1FA" },
+            grid: { display: false },
+          },
+          y: {
+            position: "left",
+            ticks: { color: "#BBE1FA" },
+            grid: { color: "rgba(187, 225, 250, 0.1)" },
+          },
+          y1: {
+            position: "right",
+            ticks: { color: "#BBE1FA" },
+            grid: { drawOnChartArea: false },
+          }
+        }
+      }
+    });
+  }
+
+  // Pressure chart
+  const ctx2 = document.getElementById("pressureChart");
+  if (ctx2) {
+    new Chart(ctx2, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Pressure (hPa)",
+          data: pressure,
+          borderColor: "#0F4C75",
+          backgroundColor: "rgba(15, 76, 117, 0.2)",
+          tension: 0.3,
+          pointRadius: 3,
+          pointBackgroundColor: "#3282B8",
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: "#BBE1FA" } }
+        },
+        scales: {
+          x: {
+            ticks: { color: "#BBE1FA" },
+            grid: { display: false },
+          },
+          y: {
+            ticks: { color: "#BBE1FA" },
+            grid: { color: "rgba(187, 225, 250, 0.1)" },
+          }
+        }
+      }
+    });
+  }
+
+</script>
+{% endblock %}
