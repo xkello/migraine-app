@@ -1,5 +1,10 @@
+# tracker/views.py
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from .forms import DailyLogForm
+from .models import UserProfile, DailyLog
+from .services import openweather
 
 
 @login_required(login_url="/admin/login/")
@@ -16,7 +21,42 @@ def home(request):
 
 @login_required(login_url="/admin/login/")
 def log_day(request):
+    # default date is "today"
+    initial = {"date": timezone.localdate()}
+
+    if request.method == "POST":
+        form = DailyLogForm(request.POST)
+        if form.is_valid():
+            log: DailyLog = form.save(commit=False)
+            log.user = request.user
+
+            # Try to attach weather snapshot
+            try:
+                profile = UserProfile.objects.get(user=request.user)
+                city = profile.city or "Bratislava"  # fallback if empty
+            except UserProfile.DoesNotExist:
+                city = "Bratislava"
+
+            try:
+                weather = openweather.get_current_weather(city)
+            except Exception:
+                weather = None
+
+            if weather:
+                log.weather_temp_c = weather["temp"]
+                log.weather_humidity = weather["humidity"]
+                log.weather_pressure_hpa = weather["pressure"]
+                log.weather_wind_speed = weather["wind"]
+                log.weather_cloudiness = weather["clouds"]
+                log.weather_description = weather["description"]
+
+            log.save()
+            return redirect("tracker:home")
+    else:
+        form = DailyLogForm(initial=initial)
+
     context = {
+        "form": form,
         "active_tab": "log",
     }
-    return render(request, "tracker/log_placeholder.html", context)
+    return render(request, "tracker/log_form.html", context)

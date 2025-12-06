@@ -78,3 +78,42 @@ main {
     opacity: 1;
     color: #ffffff;
 }
+
+/* Log form inputs */
+.log-input {
+    background-color: #111922;
+    border: 1px solid rgba(187, 225, 250, 0.2);
+    color: var(--text-main);
+}
+
+.log-input:focus {
+    background-color: #131f29;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0.1rem rgba(50, 130, 184, 0.5);
+}
+
+/* Labels and help text */
+.form-label-small {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.1rem;
+}
+
+.form-help {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Primary button matching nav */
+.btn-accent {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #ffffff;
+}
+
+.btn-accent:hover,
+.btn-accent:focus {
+    background-color: #27689a;
+    border-color: #27689a;
+    color: #ffffff;
+}

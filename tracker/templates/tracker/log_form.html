@@ -1,12 +1,137 @@
 {% extends "tracker/base.html" %}
+
 {% block title %}Log your day{% endblock %}
 
 {% block content %}
-<h1 class="h3 mb-3">Log today</h1>
+  <h2 class="h4 mb-3">Log your day</h2>
 
-<form method="post" class="card p-3">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button class="btn btn-success">Save</button>
-</form>
+  <form method="post" class="card-glass p-3 mb-3">
+    {% csrf_token %}
+
+    <!-- Date -->
+    <div class="mb-2">
+      <div class="form-label-small">Date</div>
+      {{ form.date }}
+      <div class="form-help">
+        Day this log refers to (usually today).
+      </div>
+    </div>
+
+    <!-- Sleep -->
+    <div class="mb-2">
+      <div class="form-label-small">Sleep hours</div>
+      {{ form.sleep_hours }}
+      <div class="form-help">
+        Approximate hours of sleep for this night/day.
+      </div>
+    </div>
+
+    <!-- Activity -->
+    <div class="mb-2">
+      <div class="form-label-small">Physical activity (minutes)</div>
+      {{ form.physical_activity_minutes }}
+      <div class="form-help">
+        Walking, exercise, chores… anything that counts as movement.
+      </div>
+    </div>
+
+    <!-- Stress -->
+    <div class="mb-2">
+      <div class="form-label-small">Stress level (1–5)</div>
+      {{ form.stress_level }}
+      <div class="form-help">
+        1 = very calm, 5 = extremely stressed.
+      </div>
+    </div>
+
+    <!-- Caffeine -->
+    <div class="mb-2">
+      <div class="form-label-small">Caffeine (mg)</div>
+      {{ form.caffeine_mg }}
+      <div class="form-help">
+        Rough estimate (coffee, tea, energy drinks, cola…).
+      </div>
+    </div>
+
+    <hr class="border-secondary my-3">
+
+    <!-- Had migraine toggle -->
+    <div class="form-check mb-2">
+      {{ form.had_migraine }}
+      <label class="form-check-label form-label-small ms-1" for="{{ form.had_migraine.id_for_label }}">
+        Had migraine
+      </label>
+    </div>
+
+    <!-- Migraine details: shown only if checkbox is on -->
+    <div id="migraine-fields" class="mb-2">
+      <div class="mb-2">
+        <div class="form-label-small">Migraine intensity (0–10)</div>
+        {{ form.migraine_intensity }}
+        <div class="form-help">
+          0 = none, 10 = worst imaginable pain.
+        </div>
+      </div>
+
+      <div class="mb-2">
+        <div class="form-label-small">Migraine duration (hours)</div>
+        {{ form.migraine_duration_hours }}
+        <div class="form-help">
+          About how long the migraine lasted in total.
+        </div>
+      </div>
+
+      <div class="mb-2">
+        <div class="form-label-small">Medication taken</div>
+        {{ form.meds_taken }}
+        <div class="form-help">
+          Optional. For example: triptan, ibuprofen, caffeine, etc.
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="mb-2">
+      <div class="form-label-small">Notes</div>
+      {{ form.notes }}
+      <div class="form-help">
+        Anything else that might matter (food, hormones, stress event, travel…).
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-accent w-100 mt-2">
+      Save log
+    </button>
+  </form>
+
+  <p class="small text-soft">
+    Weather at the time of logging is saved automatically and will later be used
+    to estimate your migraine risk.
+  </p>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function() {
+    const checkbox = document.getElementById("{{ form.had_migraine.id_for_label }}") ||
+                     document.querySelector('input[name="{{ form.had_migraine.name }}"]');
+    const migraineFields = document.getElementById("migraine-fields");
+
+    function updateVisibility() {
+      if (!checkbox) return;
+      if (checkbox.checked) {
+        migraineFields.classList.remove("d-none");
+      } else {
+        migraineFields.classList.add("d-none");
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      updateVisibility();
+      if (checkbox) {
+        checkbox.addEventListener("change", updateVisibility);
+      }
+    });
+  })();
+</script>
 {% endblock %}
