@@ -33,7 +33,7 @@ body {
 }
 
 main {
-    padding-bottom: 100px !important;
+    padding-bottom: 100px;
 }
 
 /* Bottom navigation */
@@ -42,57 +42,39 @@ main {
     border-top: 1px solid rgba(187, 225, 250, 0.2);
 
     position: fixed;
-    bottom: 0;
     left: 0;
-    width: 100%;
+    right: 0;
+    bottom: 1px;
     z-index: 9999;
 }
 
-/* Inner wrapper for icons + plus button */
+/* Inner wrapper for icons */
 .bottom-nav-inner {
     max-width: 480px;
     margin: 0 auto;
-    padding: 0.35rem 1.5rem 0.9rem;
+    padding: 0.1rem 1.5rem 1.5rem;  /* lower height */
     display: grid;
-    grid-template-columns: 1fr auto 1fr;  /* left icon, plus, right icon */
+    grid-template-columns: repeat(3, 1fr);  /* home, log, profile */
     align-items: center;
 }
 
-/* Left/right icons */
+/* Base icon style */
 .nav-icon {
     color: var(--accent-light);
-    opacity: 0.7;
-    transition: opacity 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+    opacity: 0.6;
+    transition: opacity 0.15s ease, color 0.15s ease, background-color 0.15s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     justify-self: center;
 }
 
+.nav-icon i {
+    font-size: 1.8rem;  /* slightly bigger icons */
+}
+
+/* Active tab = brighter color */
 .nav-icon-active {
     opacity: 1;
     color: #ffffff;
-    background-color: var(--accent);
-    border-radius: 999px;
-    padding: 4px 10px;
-}
-
-/* Floating plus button in the middle */
-.nav-plus-btn {
-    justify-self: center;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: none;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    transform: translateY(-30%);  /* lift it a bit above the bar */
-}
-
-.nav-plus-btn i {
-    font-size: 1.8rem;
 }

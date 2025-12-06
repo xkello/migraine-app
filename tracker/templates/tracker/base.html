@@ -29,26 +29,26 @@
 </main>
 
 <!-- Bottom navigation bar -->
-<nav class="bottom-nav sticky-bottom">
+<nav class="bottom-nav fixed-bottom">
   <div class="bottom-nav-inner">
     {% with active=active_tab|default:"home" %}
 
-      <!-- Home icon -->
+      <!-- Home -->
       <a class="nav-icon {% if active == 'home' %}nav-icon-active{% endif %}"
          href="{% url 'tracker:home' %}">
-        <i class="bi bi-house-fill fs-4"></i>
+        <i class="bi bi-house-fill"></i>
       </a>
 
-      <!-- Big floating plus button in the middle -->
-      <a class="nav-plus-btn"
+      <!-- Log (main action) -->
+      <a class="nav-icon {% if active == 'log' %}nav-icon-active{% endif %}"
          href="{% url 'tracker:log' %}">
         <i class="bi bi-plus-lg"></i>
       </a>
 
-      <!-- Stats icon (for future stats page) -->
-      <a class="nav-icon {% if active == 'stats' %}nav-icon-active{% endif %}"
+      <!-- Profile -->
+      <a class="nav-icon {% if active == 'profile' %}nav-icon-active{% endif %}"
          href="#">
-        <i class="bi bi-bar-chart-fill fs-4"></i>
+        <i class="bi bi-person-circle"></i>
       </a>
 
     {% endwith %}
