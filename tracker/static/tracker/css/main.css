@@ -44,7 +44,7 @@ main {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 1px;
+    bottom: 0;
     z-index: 9999;
 }
 
@@ -52,7 +52,7 @@ main {
 .bottom-nav-inner {
     max-width: 480px;
     margin: 0 auto;
-    padding: 0.1rem 1.5rem 1.5rem;  /* lower height */
+    padding: 0.1rem 1.5rem 0.5rem;  /* lower height */
     display: grid;
     grid-template-columns: repeat(3, 1fr);  /* home, log, profile */
     align-items: center;

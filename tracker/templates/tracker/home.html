@@ -1,151 +1,324 @@
 {% extends "tracker/base.html" %}
 
-{% block title %}Overview{% endblock %}
+{% block title %}Migraine Tracker{% endblock %}
 
 {% block content %}
-<div class="mb-3">
-  <p class="mb-1 text-soft">Welcome back, <b>{{ user_name|default:"friend" }}</b></p>
+  <h2 class="h4 mb-3">Welcome back, {{ user_name }}</h2>
 
-</div>
-
-<div class="row g-3 mb-3">
-  <!-- Today's status / wow box -->
-  <div class="col-12 col-md-5">
-    <div class="card-glass p-3 h-100 d-flex flex-column justify-content-center">
-      <p class="mb-1 text-soft">Today’s migraine risk (demo)</p>
-      <div class="metric-big mb-1">32<span class="fs-5">%</span></div>
-        <div class="metric-big mb-1">32<span class="fs-5">%</span></div>
-        <div class="metric-big mb-1">32<span class="fs-5">%</span></div>
-        <div class="metric-big mb-1">32<span class="fs-5">%</span></div>
-      <p class="mb-0 small text-soft">This is placeholder data – later this will use your personal model.</p>
+  {% if not has_data %}
+    <div class="card-glass p-3 mb-3">
+      <p class="mb-0 text-soft">
+        You don't have any logs yet. Tap the <strong>+</strong> button in the bottom bar
+        to add your first day. Once you have a few entries, your graphs will appear here.
+      </p>
     </div>
-  </div>
+  {% else %}
 
-  <!-- Sleep vs migraine chart -->
-  <div class="col-12 col-md-7">
-    <div class="card-glass p-3 h-100">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <p class="mb-0 text-soft">Last 7 days</p>
-        <span class="small text-soft">Sleep &amp; migraines</span>
+    <!-- HEALTH SECTION -->
+    <p class="mb-1 text-soft small">Your health data</p>
+    <!-- Sleep -->
+    <div class="card-glass mb-3">
+      <div class="d-flex justify-content-between align-items-center px-3 pt-2">
+        <span class="small fw-semibold">Sleep (hours)</span>
+        <button class="btn btn-sm btn-link text-light p-0 toggle-graph" data-target="#graph-sleep">
+          <i class="bi bi-chevron-up"></i>
+        </button>
       </div>
-      <canvas id="sleepMigraineChart" height="120"></canvas>
-    </div>
-  </div>
-</div>
-
-<div class="row g-3">
-  <!-- Weather / pressure chart -->
-  <div class="col-12">
-    <div class="card-glass p-3">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <p class="mb-0 text-soft">Pressure trend</p>
-        <span class="small text-soft">Past days (demo)</span>
+      <div id="graph-sleep" class="p-3 pt-1">
+        <canvas id="sleepChart" height="140"></canvas>
       </div>
-      <canvas id="pressureChart" height="120"></canvas>
     </div>
-  </div>
-</div>
+
+    <!-- Activity -->
+    <div class="card-glass mb-3">
+      <div class="d-flex justify-content-between align-items-center px-3 pt-2">
+        <span class="small fw-semibold">Physical activity (minutes)</span>
+        <button class="btn btn-sm btn-link text-light p-0 toggle-graph" data-target="#graph-activity">
+          <i class="bi bi-chevron-up"></i>
+        </button>
+      </div>
+      <div id="graph-activity" class="p-3 pt-1">
+        <canvas id="activityChart" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- Stress -->
+    <div class="card-glass mb-3">
+      <div class="d-flex justify-content-between align-items-center px-3 pt-2">
+        <span class="small fw-semibold">Stress level (1–5)</span>
+        <button class="btn btn-sm btn-link text-light p-0 toggle-graph" data-target="#graph-stress">
+          <i class="bi bi-chevron-up"></i>
+        </button>
+      </div>
+      <div id="graph-stress" class="p-3 pt-1">
+        <canvas id="stressChart" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- Caffeine -->
+    <div class="card-glass mb-3">
+      <div class="d-flex justify-content-between align-items-center px-3 pt-2">
+        <span class="small fw-semibold">Caffeine (mg)</span>
+        <button class="btn btn-sm btn-link text-light p-0 toggle-graph" data-target="#graph-caffeine">
+          <i class="bi bi-chevron-up"></i>
+        </button>
+      </div>
+      <div id="graph-caffeine" class="p-3 pt-1">
+        <canvas id="caffeineChart" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- MIGRAINE SECTION -->
+    <p class="mb-1 text-soft small">Your migraine data</p>
+    <div class="card-glass mb-3">
+      <div class="d-flex justify-content-between align-items-center px-3 pt-2">
+        <span class="small fw-semibold">Intensity, duration & occurrences</span>
+        <button class="btn btn-sm btn-link text-light p-0 toggle-graph" data-target="#graph-migraine">
+          <i class="bi bi-chevron-up"></i>
+        </button>
+      </div>
+      <div id="graph-migraine" class="p-3 pt-1">
+        <canvas id="migraineChart" height="180"></canvas>
+      </div>
+    </div>
+
+    <!-- WEATHER SECTION -->
+    <p class="mb-1 text-soft small">Weather data</p>
+    <div class="card-glass mb-3">
+      <div class="d-flex justify-content-between align-items-center px-3 pt-2">
+        <span class="small fw-semibold">Pressure, temperature & humidity</span>
+        <button class="btn btn-sm btn-link text-light p-0 toggle-graph" data-target="#graph-weather">
+          <i class="bi bi-chevron-up"></i>
+        </button>
+      </div>
+      <div id="graph-weather" class="p-3 pt-1">
+        <canvas id="weatherChart" height="180"></canvas>
+      </div>
+    </div>
+
+  {% endif %}
 {% endblock %}
 
 {% block extra_js %}
 <script>
-  // Data from Django context (placeholder for now)
-  const sleepHours = {{ sleep_hours|safe }};
-  const migraineIntensity = {{ migraine_intensity|safe }};
-  const pressure = {{ pressure|safe }};
-  const labels = ["-6d", "-5d", "-4d", "-3d", "-2d", "-1d", "Today"];
+  // Data from Django (already valid JSON strings)
+  const labels = {{ labels_json|safe }};
+  const sleepData = {{ sleep_json|safe }};
+  const activityData = {{ activity_json|safe }};
+  const stressData = {{ stress_json|safe }};
+  const caffeineData = {{ caffeine_json|safe }};
 
-    // Sleep vs migraine chart
-  const ctx1 = document.getElementById("sleepMigraineChart");
-  if (ctx1) {
-    new Chart(ctx1, {
-      type: "bar",
-      data: {
-        labels: labels,
-        datasets: [
+  const migraineIntensityData = {{ migraine_intensity_json|safe }};
+  const migraineDurationData = {{ migraine_duration_json|safe }};
+  const hadMigraineFlags = {{ had_migraine_flags_json|safe }};
+
+  const tempData = {{ temp_json|safe }};
+  const pressureData = {{ pressure_json|safe }};
+  const humidityData = {{ humidity_json|safe }};
+
+  document.addEventListener("DOMContentLoaded", function () {
+    if (!labels || !labels.length || typeof Chart === "undefined") {
+      return;
+    }
+
+    // Per-graph toggle buttons
+    document.querySelectorAll(".toggle-graph").forEach(btn => {
+      btn.addEventListener("click", function () {
+        const targetSelector = this.getAttribute("data-target");
+        const body = document.querySelector(targetSelector);
+        if (!body) return;
+
+        const icon = this.querySelector("i");
+        if (body.classList.contains("d-none")) {
+          body.classList.remove("d-none");
+          if (icon) {
+            icon.classList.remove("bi-chevron-down");
+            icon.classList.add("bi-chevron-up");
+          }
+        } else {
+          body.classList.add("d-none");
+          if (icon) {
+            icon.classList.remove("bi-chevron-up");
+            icon.classList.add("bi-chevron-down");
+          }
+        }
+      });
+    });
+
+    // HEALTH CHARTS
+        // SLEEP CHART
+    const sleepCtx = document.getElementById("sleepChart");
+    if (sleepCtx) {
+      new Chart(sleepCtx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
             {
-            label: "Migraine intensity",
-            data: migraineIntensity,
-            type: "line",
-            yAxisID: "y1",
-            borderColor: "#BBE1FA",
-            backgroundColor: "rgba(187, 225, 250, 0.2)",
-            tension: 0.3,
-            pointRadius: 3,
-            pointBackgroundColor: "#BBE1FA",
-          },
-          {
-            label: "Sleep (h)",
-            data: sleepHours,
-            yAxisID: "y",
-            backgroundColor: "#3282B8",
-            borderColor: "#3282B8",
-            borderWidth: 1,
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            labels: { color: "#BBE1FA" }
-          }
+              label: "Sleep (hours)",
+              data: sleepData,
+              tension: 0.3,
+            },
+          ]
         },
-        scales: {
-          x: {
-            ticks: { color: "#BBE1FA" },
-            grid: { display: false },
-          },
-          y: {
-            position: "left",
-            ticks: { color: "#BBE1FA" },
-            grid: { color: "rgba(187, 225, 250, 0.1)" },
-          },
-          y1: {
-            position: "right",
-            ticks: { color: "#BBE1FA" },
-            grid: { drawOnChartArea: false },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true } },
+          scales: {
+            y: { beginAtZero: true }
           }
         }
-      }
-    });
-  }
+      });
+    }
 
-  // Pressure chart
-  const ctx2 = document.getElementById("pressureChart");
-  if (ctx2) {
-    new Chart(ctx2, {
-      type: "line",
-      data: {
-        labels: labels,
-        datasets: [{
-          label: "Pressure (hPa)",
-          data: pressure,
-          borderColor: "#0F4C75",
-          backgroundColor: "rgba(15, 76, 117, 0.2)",
-          tension: 0.3,
-          pointRadius: 3,
-          pointBackgroundColor: "#3282B8",
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { labels: { color: "#BBE1FA" } }
+    // ACTIVITY CHART
+    const activityCtx = document.getElementById("activityChart");
+    if (activityCtx) {
+      new Chart(activityCtx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Activity (minutes)",
+              data: activityData,
+            },
+          ]
         },
-        scales: {
-          x: {
-            ticks: { color: "#BBE1FA" },
-            grid: { display: false },
-          },
-          y: {
-            ticks: { color: "#BBE1FA" },
-            grid: { color: "rgba(187, 225, 250, 0.1)" },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true } },
+          scales: {
+            y: { beginAtZero: true }
           }
         }
-      }
-    });
-  }
+      });
+    }
 
+    // STRESS CHART
+    const stressCtx = document.getElementById("stressChart");
+    if (stressCtx) {
+      new Chart(stressCtx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Stress (1–5)",
+              data: stressData,
+              tension: 0.3,
+            },
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 5
+            }
+          }
+        }
+      });
+    }
+
+    // CAFFEINE CHART
+    const caffeineCtx = document.getElementById("caffeineChart");
+    if (caffeineCtx) {
+      new Chart(caffeineCtx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Caffeine (mg)",
+              data: caffeineData,
+            },
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true } },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+
+    // MIGRAINE CHART
+    const migCtx = document.getElementById("migraineChart");
+    if (migCtx) {
+      new Chart(migCtx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Intensity (0–10)",
+              data: migraineIntensityData,
+              type: "line",
+              tension: 0.3,
+            },
+            {
+              label: "Duration (hours)",
+              data: migraineDurationData,
+            },
+            {
+              label: "Had migraine (yes = 1)",
+              data: hadMigraineFlags,
+            },
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+
+    // WEATHER CHART
+    const weatherCtx = document.getElementById("weatherChart");
+    if (weatherCtx) {
+      new Chart(weatherCtx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Pressure (hPa)",
+              data: pressureData,
+              tension: 0.3,
+            },
+            {
+              label: "Temperature (°C)",
+              data: tempData,
+              tension: 0.3,
+            },
+            {
+              label: "Humidity (%)",
+              data: humidityData,
+              tension: 0.3,
+              borderDash: [4, 4],
+            },
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true } },
+          scales: { y: { beginAtZero: false } }
+        }
+      });
+    }
+  });
 </script>
 {% endblock %}
