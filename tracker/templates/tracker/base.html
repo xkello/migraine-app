@@ -13,8 +13,7 @@
         crossorigin="anonymous">
 
   <!-- Bootstrap Icons -->
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
   <link rel="stylesheet" href="{% static 'tracker/css/main.css' %}">
 </head>
@@ -37,18 +36,21 @@
       <a class="nav-icon {% if active == 'home' %}nav-icon-active{% endif %}"
          href="{% url 'tracker:home' %}">
         <i class="bi bi-house-fill"></i>
+        <span class="nav-label">Home</span>
       </a>
 
       <!-- Log (main action) -->
       <a class="nav-icon {% if active == 'log' %}nav-icon-active{% endif %}"
          href="{% url 'tracker:log' %}">
         <i class="bi bi-plus-lg"></i>
+        <span class="nav-label">Log</span>
       </a>
 
       <!-- Profile -->
       <a class="nav-icon {% if active == 'profile' %}nav-icon-active{% endif %}"
          href="#">
         <i class="bi bi-person-circle"></i>
+        <span class="nav-label">Profile</span>
       </a>
 
     {% endwith %}

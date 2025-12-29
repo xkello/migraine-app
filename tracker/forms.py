@@ -1,6 +1,7 @@
 # tracker/forms.py
 from django import forms
 from .models import DailyLog
+from django.utils import timezone
 
 
 class DailyLogForm(forms.ModelForm):
@@ -25,6 +26,7 @@ class DailyLogForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["date"].widget.attrs["max"] = timezone.localdate().isoformat()
 
         for name, field in self.fields.items():
             widget = field.widget
@@ -37,3 +39,9 @@ class DailyLogForm(forms.ModelForm):
                 widget.attrs.update({
                     "class": "form-control form-control-sm log-input",
                 })
+
+    def clean_date(self):
+        d = self.cleaned_data["date"]
+        if d > timezone.localdate():
+            raise forms.ValidationError("You cannot log a future date.")
+        return d

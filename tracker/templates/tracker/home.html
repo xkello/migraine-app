@@ -20,9 +20,10 @@
     <div class="card-glass mb-3">
       <div class="d-flex justify-content-between align-items-center px-3 pt-2">
         <span class="small fw-semibold">Sleep (hours)</span>
-        <button class="btn btn-sm btn-link text-light p-0 toggle-graph" data-target="#graph-sleep">
-          <i class="bi bi-chevron-up"></i>
-        </button>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="sleepChart">◀</button>
+            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="sleepChart">▶</button>
+          </div>
       </div>
       <div id="graph-sleep" class="p-3 pt-1">
         <canvas id="sleepChart" height="140"></canvas>
@@ -33,9 +34,10 @@
     <div class="card-glass mb-3">
       <div class="d-flex justify-content-between align-items-center px-3 pt-2">
         <span class="small fw-semibold">Physical activity (minutes)</span>
-        <button class="btn btn-sm btn-link text-light p-0 toggle-graph" data-target="#graph-activity">
-          <i class="bi bi-chevron-up"></i>
-        </button>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="activityChart">◀</button>
+            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="activityChart">▶</button>
+          </div>
       </div>
       <div id="graph-activity" class="p-3 pt-1">
         <canvas id="activityChart" height="140"></canvas>
@@ -46,9 +48,10 @@
     <div class="card-glass mb-3">
       <div class="d-flex justify-content-between align-items-center px-3 pt-2">
         <span class="small fw-semibold">Stress level (1–5)</span>
-        <button class="btn btn-sm btn-link text-light p-0 toggle-graph" data-target="#graph-stress">
-          <i class="bi bi-chevron-up"></i>
-        </button>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="stressChart">◀</button>
+            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="stressChart">▶</button>
+          </div>
       </div>
       <div id="graph-stress" class="p-3 pt-1">
         <canvas id="stressChart" height="140"></canvas>
@@ -59,9 +62,10 @@
     <div class="card-glass mb-3">
       <div class="d-flex justify-content-between align-items-center px-3 pt-2">
         <span class="small fw-semibold">Caffeine (mg)</span>
-        <button class="btn btn-sm btn-link text-light p-0 toggle-graph" data-target="#graph-caffeine">
-          <i class="bi bi-chevron-up"></i>
-        </button>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="caffeineChart">◀</button>
+            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="caffeineChart">▶</button>
+          </div>
       </div>
       <div id="graph-caffeine" class="p-3 pt-1">
         <canvas id="caffeineChart" height="140"></canvas>
@@ -70,31 +74,93 @@
 
     <!-- MIGRAINE SECTION -->
     <p class="mb-1 text-soft small">Your migraine data</p>
+    <!-- MIGRAINE INTENSITY -->
     <div class="card-glass mb-3">
       <div class="d-flex justify-content-between align-items-center px-3 pt-2">
         <span class="small fw-semibold">Intensity, duration & occurrences</span>
-        <button class="btn btn-sm btn-link text-light p-0 toggle-graph" data-target="#graph-migraine">
-          <i class="bi bi-chevron-up"></i>
-        </button>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="migraineIntensityChart">◀</button>
+            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="migraineIntensityChart">▶</button>
+          </div>
       </div>
-      <div id="graph-migraine" class="p-3 pt-1">
-        <canvas id="migraineChart" height="180"></canvas>
+      <div id="graph-intensity" class="p-3 pt-1">
+        <canvas id="migraineIntensityChart" height="180"></canvas>
+      </div>
+    </div>
+
+    <!-- MIGRAINE DURATION -->
+    <div class="card-glass mb-3">
+      <div class="d-flex justify-content-between align-items-center px-3 pt-2">
+        <span class="small fw-semibold">Intensity, duration & occurrences</span>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="migraineDurationChart">◀</button>
+            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="migraineDurationChart">▶</button>
+          </div>
+      </div>
+      <div id="graph-duration" class="p-3 pt-1">
+        <canvas id="migraineDurationChart" height="180"></canvas>
+      </div>
+    </div>
+
+    <!-- MIGRAINE OCCURRENCES -->
+    <div class="card-glass mb-3">
+      <div class="d-flex justify-content-between align-items-center px-3 pt-2">
+        <span class="small fw-semibold">Intensity, duration & occurrences</span>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="migraineOccurrenceChart">◀</button>
+            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="migraineOccurrenceChart">▶</button>
+          </div>
+      </div>
+      <div id="graph-occurrence" class="p-3 pt-1">
+        <canvas id="migraineOccurrenceChart" height="180"></canvas>
       </div>
     </div>
 
     <!-- WEATHER SECTION -->
     <p class="mb-1 text-soft small">Weather data</p>
+
+    <!-- Pressure -->
     <div class="card-glass mb-3">
       <div class="d-flex justify-content-between align-items-center px-3 pt-2">
-        <span class="small fw-semibold">Pressure, temperature & humidity</span>
-        <button class="btn btn-sm btn-link text-light p-0 toggle-graph" data-target="#graph-weather">
-          <i class="bi bi-chevron-up"></i>
-        </button>
+        <span class="small fw-semibold">Pressure (hPa)</span>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-link text-light p-0 weather-prev">◀</button>
+            <button class="btn btn-sm btn-link text-light p-0 weather-next">▶</button>
+          </div>
       </div>
-      <div id="graph-weather" class="p-3 pt-1">
-        <canvas id="weatherChart" height="180"></canvas>
+      <div id="graph-pressure" class="p-3 pt-1">
+        <canvas id="weatherPressureChart" height="140"></canvas>
       </div>
     </div>
+
+    <!-- Temperature -->
+    <div class="card-glass mb-3">
+      <div class="d-flex justify-content-between align-items-center px-3 pt-2">
+        <span class="small fw-semibold">Temperature (°C)</span>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-link text-light p-0 weather-prev">◀</button>
+            <button class="btn btn-sm btn-link text-light p-0 weather-next">▶</button>
+          </div>
+      </div>
+      <div id="graph-temp" class="p-3 pt-1">
+        <canvas id="weatherTempChart" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- Humidity -->
+    <div class="card-glass mb-3">
+      <div class="d-flex justify-content-between align-items-center px-3 pt-2">
+        <span class="small fw-semibold">Humidity (%)</span>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-link text-light p-0 weather-prev">◀</button>
+            <button class="btn btn-sm btn-link text-light p-0 weather-next">▶</button>
+          </div>
+      </div>
+      <div id="graph-humidity" class="p-3 pt-1">
+        <canvas id="weatherHumidityChart" height="140"></canvas>
+      </div>
+    </div>
+
 
   {% endif %}
 {% endblock %}
@@ -102,19 +168,30 @@
 {% block extra_js %}
 <script>
   // Data from Django (already valid JSON strings)
-  const labels = {{ labels_json|safe }};
-  const sleepData = {{ sleep_json|safe }};
-  const activityData = {{ activity_json|safe }};
-  const stressData = {{ stress_json|safe }};
-  const caffeineData = {{ caffeine_json|safe }};
+  const labels = {{ labels_json|default:"[]"|safe }};
+  const sleepData = {{ sleep_json|default:"[]"|safe }};
+  const activityData = {{ activity_json|default:"[]"|safe }};
+  const stressData = {{ stress_json|default:"[]"|safe }};
+  const caffeineData = {{ caffeine_json|default:"[]"|safe }};
 
-  const migraineIntensityData = {{ migraine_intensity_json|safe }};
-  const migraineDurationData = {{ migraine_duration_json|safe }};
-  const hadMigraineFlags = {{ had_migraine_flags_json|safe }};
+  const migraineIntensityData = {{ migraine_intensity_json|default:"[]"|safe }};
+  const migraineDurationData = {{ migraine_duration_json|default:"[]"|safe }};
+  const hadMigraineFlags = {{ had_migraine_flags_json|default:"[]"|safe }};
 
-  const tempData = {{ temp_json|safe }};
-  const pressureData = {{ pressure_json|safe }};
-  const humidityData = {{ humidity_json|safe }};
+  const weatherLabelsISO = {{ weather_labels_json|default:"[]"|safe }};
+  const pressureData = {{ weather_pressure_json|default:"[]"|safe }};
+  const tempData = {{ weather_temp_json|default:"[]"|safe }};
+  const humidityData = {{ weather_humidity_json|default:"[]"|safe }};
+
+  function fmtLabel(isoDate) {
+      // isoDate: "2025-12-28"
+      const [y,m,d] = isoDate.split("-");
+      return `${d}.${m}`;
+  }
+
+  function sliceWindow(arr, start, size) {
+      return arr.slice(start, start + size);
+  }
 
   document.addEventListener("DOMContentLoaded", function () {
     if (!labels || !labels.length || typeof Chart === "undefined") {
@@ -145,180 +222,251 @@
       });
     });
 
-    // HEALTH CHARTS
-        // SLEEP CHART
-    const sleepCtx = document.getElementById("sleepChart");
-    if (sleepCtx) {
-      new Chart(sleepCtx, {
+    const fullLabels = labels.map(fmtLabel);
+
+    // ---- helpers ----
+    function clampStart(start, size, len) {
+      if (len <= size) return 0;
+      return Math.max(0, Math.min(start, len - size));
+    }
+
+    function getWindow(cfg) {
+      const len = (cfg.labels || []).length;
+      const start = clampStart(cfg.start || 0, cfg.size, len);
+      return {
+        labels: sliceWindow(cfg.labels, start, cfg.size),
+        data: sliceWindow(cfg.data, start, cfg.size),
+        start
+      };
+    }
+
+    function updateSingleChart(chart, cfg) {
+      if (!chart || !cfg || !Array.isArray(cfg.data) || !Array.isArray(cfg.labels)) return;
+
+      const win = getWindow(cfg);
+      cfg.start = win.start;
+
+      chart.data.labels = win.labels;
+      chart.data.datasets[0].data = win.data;
+      chart.update();
+    }
+
+    const charts = {}; // id -> Chart instance
+
+    // series config (IMPORTANT: use JS variables, not template tags)
+    const series = {
+      sleepChart:    { labels: fullLabels, data: sleepData,    size: 7, start: Math.max(0, fullLabels.length - 7) },
+      activityChart: { labels: fullLabels, data: activityData, size: 7, start: Math.max(0, fullLabels.length - 7) },
+      stressChart:   { labels: fullLabels, data: stressData,   size: 7, start: Math.max(0, fullLabels.length - 7) },
+      caffeineChart: { labels: fullLabels, data: caffeineData, size: 7, start: Math.max(0, fullLabels.length - 7) },
+    };
+
+    // migraine series (7-day paging like health)
+    series.migraineIntensityChart = {
+      labels: fullLabels,
+      data: migraineIntensityData,
+      size: 7,
+      start: Math.max(0, fullLabels.length - 7)
+    };
+
+    series.migraineDurationChart = {
+      labels: fullLabels,
+      data: migraineDurationData,
+      size: 7,
+      start: Math.max(0, fullLabels.length - 7)
+    };
+
+    series.migraineOccurrenceChart = {
+      labels: fullLabels,
+      data: hadMigraineFlags,
+      size: 7,
+      start: Math.max(0, fullLabels.length - 7)
+    };
+
+    createLineChart("migraineIntensityChart", "Intensity (0–10)", "#BBE1FA", series.migraineIntensityChart);
+    createLineChart("migraineDurationChart", "Duration (hours)", "#3282B8", series.migraineDurationChart);
+    createBarChart("migraineOccurrenceChart", "Had migraine (0/1)", "#0F4C75", series.migraineOccurrenceChart);
+
+    const weatherLabels = weatherLabelsISO.map(fmtLabel);
+
+    // fixed window: 7 past incl today + 3 future = 10 points
+    const weatherGroup = {
+      labels: weatherLabels,
+      size: 10,      // 7 past + 3 future window look
+      step: 3,       // move by 3 days each click
+      start: Math.max(0, weatherLabels.length - 10), // start at "latest window"
+      pressure: pressureData,
+      temp: tempData,
+      humidity: humidityData,
+    };
+
+    document.querySelectorAll(".weather-prev").forEach(btn => {
+      btn.addEventListener("click", () => {
+        weatherGroup.start -= weatherGroup.step;
+        updateWeatherCharts();
+      });
+    });
+
+    document.querySelectorAll(".weather-next").forEach(btn => {
+      btn.addEventListener("click", () => {
+        weatherGroup.start += weatherGroup.step;
+        updateWeatherCharts();
+      });
+    });
+
+    function createWeatherLine(canvasId, label, color, labelsArr, dataArr) {
+      const el = document.getElementById(canvasId);
+      if (!el) return;
+
+      charts[canvasId] = new Chart(el, {
         type: "line",
         data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Sleep (hours)",
-              data: sleepData,
-              tension: 0.3,
-            },
-          ]
+          labels: labelsArr,
+          datasets: [{
+            label,
+            data: dataArr,
+            borderColor: color,
+            backgroundColor: "transparent",
+            tension: 0.35,
+            pointRadius: 3
+          }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: true } },
+          plugins: { legend: { labels: { color: "#BBE1FA" } } },
           scales: {
-            y: { beginAtZero: true }
+            x: { ticks: { color: "#BBE1FA" }, grid: { color: "rgba(187,225,250,0.08)" } },
+            y: { ticks: { color: "#BBE1FA" }, grid: { color: "rgba(187,225,250,0.08)" } }
           }
         }
       });
     }
 
-    // ACTIVITY CHART
-    const activityCtx = document.getElementById("activityChart");
-    if (activityCtx) {
-      new Chart(activityCtx, {
-        type: "bar",
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Activity (minutes)",
-              data: activityData,
-            },
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: true } },
-          scales: {
-            y: { beginAtZero: true }
-          }
-        }
-      });
+    function getWeatherWindow() {
+      const len = weatherGroup.labels.length;
+      const start = clampStart(weatherGroup.start, weatherGroup.size, len);
+
+      return {
+        start,
+        labels: sliceWindow(weatherGroup.labels, start, weatherGroup.size),
+        pressure: sliceWindow(weatherGroup.pressure, start, weatherGroup.size),
+        temp: sliceWindow(weatherGroup.temp, start, weatherGroup.size),
+        humidity: sliceWindow(weatherGroup.humidity, start, weatherGroup.size),
+      };
     }
 
-    // STRESS CHART
-    const stressCtx = document.getElementById("stressChart");
-    if (stressCtx) {
-      new Chart(stressCtx, {
+    function updateWeatherCharts() {
+      const w = getWeatherWindow();
+      weatherGroup.start = w.start;
+
+      updateSingleChart(charts["weatherPressureChart"], { labels: weatherGroup.labels, data: weatherGroup.pressure, size: weatherGroup.size, start: weatherGroup.start });
+      updateSingleChart(charts["weatherTempChart"], { labels: weatherGroup.labels, data: weatherGroup.temp, size: weatherGroup.size, start: weatherGroup.start });
+      updateSingleChart(charts["weatherHumidityChart"], { labels: weatherGroup.labels, data: weatherGroup.humidity, size: weatherGroup.size, start: weatherGroup.start });
+    }
+
+    const w0 = getWeatherWindow();
+    weatherGroup.start = w0.start;
+
+    createWeatherLine("weatherPressureChart", "Pressure (hPa)", "#3282B8", w0.labels, w0.pressure);
+    createWeatherLine("weatherTempChart", "Temperature (°C)", "#BBE1FA", w0.labels, w0.temp);
+    createWeatherLine("weatherHumidityChart", "Humidity (%)", "#0F4C75", w0.labels, w0.humidity);
+
+
+
+    // create charts (initialize with window slice, not full data)
+    function createLineChart(canvasId, label, color, cfg) {
+      const el = document.getElementById(canvasId);
+      if (!el) return;
+
+      const win = getWindow(cfg);
+
+      charts[canvasId] = new Chart(el, {
         type: "line",
         data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Stress (1–5)",
-              data: stressData,
-              tension: 0.3,
-            },
-          ]
+          labels: win.labels,
+          datasets: [{
+            label: label,
+            data: win.data,
+            borderColor: color,
+            backgroundColor: "transparent",
+            tension: 0.35,
+            pointRadius: 3
+          }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: true } },
+          plugins: {
+            legend: { labels: { color: "#BBE1FA" } }
+          },
           scales: {
-            y: {
-              beginAtZero: true,
-              max: 5
-            }
+            x: { ticks: { color: "#BBE1FA" }, grid: { color: "rgba(187,225,250,0.08)" } },
+            y: { ticks: { color: "#BBE1FA" }, grid: { color: "rgba(187,225,250,0.08)" } }
           }
         }
       });
     }
 
-    // CAFFEINE CHART
-    const caffeineCtx = document.getElementById("caffeineChart");
-    if (caffeineCtx) {
-      new Chart(caffeineCtx, {
+    function createBarChart(canvasId, label, color, cfg) {
+      const el = document.getElementById(canvasId);
+      if (!el) return;
+
+      const win = getWindow(cfg);
+
+      charts[canvasId] = new Chart(el, {
         type: "bar",
         data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Caffeine (mg)",
-              data: caffeineData,
-            },
-          ]
+          labels: win.labels,
+          datasets: [{
+            label: label,
+            data: win.data,
+            borderColor: color,
+            backgroundColor: color
+          }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: true } },
+          plugins: {
+            legend: { labels: { color: "#BBE1FA" } }
+          },
           scales: {
-            y: { beginAtZero: true }
+            x: { ticks: { color: "#BBE1FA" }, grid: { color: "rgba(187,225,250,0.08)" } },
+            y: { ticks: { color: "#BBE1FA" }, grid: { color: "rgba(187,225,250,0.08)" } }
           }
         }
       });
     }
 
+    // create your health charts
+    createLineChart("sleepChart", "Sleep (hours)", "#3282B8", series.sleepChart);
+    createBarChart("activityChart", "Activity (minutes)", "#0F4C75", series.activityChart);
+    createLineChart("stressChart", "Stress (1–5)", "#BBE1FA", series.stressChart);
+    createBarChart("caffeineChart", "Caffeine (mg)", "#3282B8", series.caffeineChart);
 
-    // MIGRAINE CHART
-    const migCtx = document.getElementById("migraineChart");
-    if (migCtx) {
-      new Chart(migCtx, {
-        type: "bar",
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Intensity (0–10)",
-              data: migraineIntensityData,
-              type: "line",
-              tension: 0.3,
-            },
-            {
-              label: "Duration (hours)",
-              data: migraineDurationData,
-            },
-            {
-              label: "Had migraine (yes = 1)",
-              data: hadMigraineFlags,
-            },
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: true } },
-          scales: { y: { beginAtZero: true } }
-        }
+    // paging buttons (safe)
+    document.querySelectorAll(".nav-prev").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.chart;
+        const cfg = series[key];
+        if (!cfg) return;
+        cfg.start = (cfg.start || 0) - cfg.size;
+        updateSingleChart(charts[key], cfg);
       });
-    }
+    });
 
-    // WEATHER CHART
-    const weatherCtx = document.getElementById("weatherChart");
-    if (weatherCtx) {
-      new Chart(weatherCtx, {
-        type: "line",
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Pressure (hPa)",
-              data: pressureData,
-              tension: 0.3,
-            },
-            {
-              label: "Temperature (°C)",
-              data: tempData,
-              tension: 0.3,
-            },
-            {
-              label: "Humidity (%)",
-              data: humidityData,
-              tension: 0.3,
-              borderDash: [4, 4],
-            },
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: true } },
-          scales: { y: { beginAtZero: false } }
-        }
+    document.querySelectorAll(".nav-next").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.chart;
+        const cfg = series[key];
+        if (!cfg) return;
+        cfg.start = (cfg.start || 0) + cfg.size;
+        updateSingleChart(charts[key], cfg);
       });
-    }
+    });
+
+
   });
 </script>
 {% endblock %}
