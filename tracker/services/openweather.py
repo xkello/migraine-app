@@ -1,5 +1,6 @@
 import requests
 from django.conf import settings
+from django.core.cache import cache
 
 from collections import Counter,defaultdict
 from datetime import datetime, time as dtime, timezone as dt_timezone
@@ -34,6 +35,11 @@ def _call(base_url, endpoint, params):
 
 # Geocoding (city → lat/lon)
 def geocode(city: str):
+    cache_key = f"geocode_{city.lower().replace(' ', '_')}"
+    res = cache.get(cache_key)
+    if res:
+        return res
+
     data = _call(
         settings.OWM_API_BASE,
         "/geo/1.0/direct",
@@ -42,12 +48,14 @@ def geocode(city: str):
     if not data:
         raise WeatherAPIError(f"City not found: {city}")
 
-    return {
+    res = {
         "lat": data[0]["lat"],
         "lon": data[0]["lon"],
         "name": data[0]["name"],
         "country": data[0]["country"],
     }
+    cache.set(cache_key, res, 60*60*24*30) # 30 days
+    return res
 
 
 def _get_loc(city_or_loc):
@@ -269,3 +277,105 @@ def get_weather_for_date(city_or_loc, day):
         "clouds": best_item["clouds"]["all"],
         "description": (best_item.get("weather") or [{}])[0].get("description", ""),
     }
+
+
+def get_weather_for_range(city_or_loc, dates):
+    """
+    Fetch weather for a list of dates as efficiently as possible.
+    Returns {date_obj: weather_dict}
+    """
+    if not dates:
+        return {}
+
+    loc = _get_loc(city_or_loc)
+    today = timezone.localdate()
+    results = {}
+
+    past_dates = sorted([d for d in dates if d < today])
+    future_dates = sorted([d for d in dates if d > today])
+    has_today = today in dates
+
+    # 1. Past dates (bulk fetch)
+    if past_dates:
+        start_date = past_dates[0]
+        end_date = past_dates[-1]
+        tz = timezone.get_current_timezone()
+
+        start_ts = int(timezone.make_aware(datetime.combine(start_date, dtime.min), tz).timestamp())
+        end_ts = int(timezone.make_aware(datetime.combine(end_date, dtime.max), tz).timestamp())
+
+        try:
+            all_history = get_historical_weather(loc, start_ts, end_ts, interval="hour")
+            # group by date
+            by_date = defaultdict(list)
+            for entry in all_history:
+                # OWM returns UTC timestamps
+                d_utc = datetime.fromtimestamp(entry["time"], tz=dt_timezone.utc)
+                d_local = d_utc.astimezone(tz).date()
+                by_date[d_local].append(entry)
+
+            for d in past_dates:
+                rows = by_date.get(d)
+                if rows:
+                    def avg(key):
+                        vals = [r.get(key) for r in rows if r.get(key) is not None]
+                        return sum(vals) / len(vals) if vals else None
+
+                    descs = [r.get("weather", [{}])[0].get("description") for r in rows if r.get("weather")]
+                    most_common_desc = Counter(descs).most_common(1)[0][0] if descs else ""
+
+                    results[d] = {
+                        "temp": avg("temp"),
+                        "humidity": avg("humidity"),
+                        "pressure": avg("pressure"),
+                        "wind": avg("wind"),
+                        "clouds": avg("clouds"),
+                        "description": most_common_desc,
+                    }
+        except Exception:
+            pass
+
+    # 2. Today
+    if has_today:
+        try:
+            results[today] = get_current_weather(loc)
+        except Exception:
+            pass
+
+    # 3. Future dates (one forecast call)
+    if future_dates:
+        try:
+            data = _call(
+                settings.OWM_API_BASE,
+                "/data/2.5/forecast",
+                {"lat": loc["lat"], "lon": loc["lon"], "units": "metric"},
+            )
+            tz = timezone.get_current_timezone()
+
+            for d in future_dates:
+                target = timezone.make_aware(datetime.combine(d, dtime(hour=12)), tz)
+                best_item = None
+                best_diff = None
+
+                for item in data.get("list", []):
+                    dt_local = timezone.localtime(datetime.fromtimestamp(item["dt"], tz=dt_timezone.utc), tz)
+                    if dt_local.date() != d:
+                        continue
+                    diff = abs((dt_local - target).total_seconds())
+                    if best_diff is None or diff < best_diff:
+                        best_diff = diff
+                        best_item = item
+
+                if best_item:
+                    results[d] = {
+                        "temp": best_item["main"]["temp"],
+                        "humidity": best_item["main"]["humidity"],
+                        "pressure": best_item["main"]["pressure"],
+                        "wind": best_item["wind"]["speed"],
+                        "clouds": best_item["clouds"]["all"],
+                        "description": (best_item.get("weather") or [{}])[0].get("description", ""),
+                    }
+        except Exception:
+            pass
+
+    return results

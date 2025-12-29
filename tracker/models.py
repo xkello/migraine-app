@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.conf import settings
 
@@ -22,53 +24,33 @@ class DailyLog(models.Model):
     - migraine info
     - weather snapshot at the time of logging
     """
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    date = models.DateField(help_text="Day this log refers to")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    date = models.DateField()
 
-    # Lifestyle / triggers
-    sleep_hours = models.DecimalField(
-        max_digits=4,
-        decimal_places=1,
-        null=True,
-        blank=True,
-        help_text="Hours of sleep for this night/day",
+    sleep_hours = models.FloatField(
+        validators=[MinValueValidator(0), MaxValueValidator(24)]
     )
-    physical_activity_minutes = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        help_text="Rough total minutes of physical activity (walking, exercise, etc.)",
+    physical_activity_minutes = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(1440)]
     )
-    stress_level = models.PositiveSmallIntegerField(
-        null=True,
-        blank=True,
-        help_text="Subjective stress 1–5",
+    stress_level = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
     )
-    caffeine_mg = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        help_text="Approximate caffeine intake in mg (coffee, energy drinks…)",
+    caffeine_mg = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(3000)]
     )
 
-    # Migraine info
     had_migraine = models.BooleanField(default=False)
-    migraine_intensity = models.PositiveSmallIntegerField(
-        null=True,
-        blank=True,
-        help_text="0–10 if you had a migraine",
+    migraine_intensity = models.IntegerField(
+        null=True, blank=True,
+        validators=[MinValueValidator(0), MaxValueValidator(10)]
     )
-    migraine_duration_hours = models.DecimalField(
-        max_digits=4,
-        decimal_places=1,
-        null=True,
-        blank=True,
-        help_text="How many hours the migraine lasted (approx.)",
+    migraine_duration_hours = models.FloatField(
+        null=True, blank=True,
+        validators=[MinValueValidator(0), MaxValueValidator(72)]
     )
-    meds_taken = models.CharField(
-        max_length=200,
-        blank=True,
-        help_text="Medication taken, if any",
-    )
+    meds_taken = models.CharField(max_length=255, blank=True)
     notes = models.TextField(blank=True)
 
     #created_at = models.DateTimeField(auto_now_add=True)
@@ -87,9 +69,22 @@ class DailyLog(models.Model):
 
     class Meta:
         ordering = ["-date", "-created_at"]
+        constraints = [
+            models.UniqueConstraint(fields=["user", "date"], name="uniq_log_per_user_per_date"),
+        ]
 
-    #def __str__(self):
-    #    return f"{self.user} – {self.date}"
+    def clean(self):
+        # If no migraine wipe migraine-only fields
+        if not self.had_migraine:
+            self.migraine_intensity = None
+            self.migraine_duration_hours = None
+            self.meds_taken = ""
+        else:
+            # If had migraine require intensity (and optionally duration)
+            if self.migraine_intensity is None:
+                raise ValidationError({"migraine_intensity": "Required when 'Had migraine' is checked."})
+            if self.migraine_duration_hours is None:
+                raise ValidationError({"migraine_duration_hours": "Required when 'Had migraine' is checked."})
 
     def __str__(self):
         return f"Log({self.user.username} @ {self.date})"

@@ -23,7 +23,7 @@
   <h1 class="h4 mb-0">Migraine Tracker</h1>
 </header>
 
-<main class="flex-grow-1 px-3 pb-5 mb-5">
+<main class="flex-grow-1 px-3">
   {% block content %}{% endblock %}
 </main>
 
@@ -48,7 +48,7 @@
 
       <!-- Profile -->
       <a class="nav-icon {% if active == 'profile' %}nav-icon-active{% endif %}"
-         href="#">
+         href="{% url 'tracker:profile' %}">
         <i class="bi bi-person-circle"></i>
         <span class="nav-label">Profile</span>
       </a>

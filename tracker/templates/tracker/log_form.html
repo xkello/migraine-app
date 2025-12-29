@@ -1,137 +1,137 @@
 {% extends "tracker/base.html" %}
 
-{% block title %}Log your day{% endblock %}
+{% block title %}{% if is_edit %}Edit Log{% else %}Log your day{% endif %}{% endblock %}
 
 {% block content %}
-  <h2 class="h4 mb-3">Log your day</h2>
+<div class="mx-auto" style="max-width: 600px;">
+  <h2 class="h4 mb-4 fw-bold">{% if is_edit %}Edit entry for {{ form.instance.date }}{% else %}Log your day{% endif %}</h2>
 
-  <form method="post" class="card-glass p-3 mb-3">
+  <form method="post" class="card-glass shadow-lg">
     {% csrf_token %}
 
-    <!-- Date -->
-    <div class="mb-2">
-      <div class="form-label-small">Date</div>
-      {{ form.date }}
-      <div class="form-help">
-        Day this log refers to (usually today).
-      </div>
-    </div>
-
-    <!-- Sleep -->
-    <div class="mb-2">
-      <div class="form-label-small">Sleep hours</div>
-      {{ form.sleep_hours }}
-      <div class="form-help">
-        Approximate hours of sleep for this night/day.
-      </div>
-    </div>
-
-    <!-- Activity -->
-    <div class="mb-2">
-      <div class="form-label-small">Physical activity (minutes)</div>
-      {{ form.physical_activity_minutes }}
-      <div class="form-help">
-        Walking, exercise, chores… anything that counts as movement.
-      </div>
-    </div>
-
-    <!-- Stress -->
-    <div class="mb-2">
-      <div class="form-label-small">Stress level (1–5)</div>
-      {{ form.stress_level }}
-      <div class="form-help">
-        1 = very calm, 5 = extremely stressed.
-      </div>
-    </div>
-
-    <!-- Caffeine -->
-    <div class="mb-2">
-      <div class="form-label-small">Caffeine (mg)</div>
-      {{ form.caffeine_mg }}
-      <div class="form-help">
-        Rough estimate (coffee ~100mg, tea, energy drinks, cola…).
-      </div>
-    </div>
-
-    <hr class="border-secondary my-3">
-
-    <!-- Had migraine toggle -->
-    <div class="form-check mb-2">
-      {{ form.had_migraine }}
-      <label class="form-check-label form-label-small ms-1" for="{{ form.had_migraine.id_for_label }}">
-        Had migraine
-      </label>
-    </div>
-
-    <!-- Migraine details: shown only if checkbox is on -->
-    <div id="migraine-fields" class="mb-2">
-      <div class="mb-2">
-        <div class="form-label-small">Migraine intensity (0–10)</div>
-        {{ form.migraine_intensity }}
-        <div class="form-help">
-          0 = none, 10 = worst imaginable pain.
+    <div class="row g-4">
+        <!-- Date -->
+        <div class="col-12">
+          <label class="form-label-small d-block mb-1">Date of Log</label>
+          {{ form.date }}
+          <div class="form-help">Which day are you reporting for?</div>
         </div>
-      </div>
 
-      <div class="mb-2">
-        <div class="form-label-small">Migraine duration (hours)</div>
-        {{ form.migraine_duration_hours }}
-        <div class="form-help">
-          About how long the migraine lasted in total.
+        <!-- Life metrics -->
+        <div class="col-6">
+          <label class="form-label-small d-block mb-1">Sleep (hours)</label>
+          {{ form.sleep_hours }}
         </div>
-      </div>
-
-      <div class="mb-2">
-        <div class="form-label-small">Medication taken</div>
-        {{ form.meds_taken }}
-        <div class="form-help">
-          Optional. For example: triptan, ibuprofen, caffeine, etc.
+        <div class="col-6">
+          <label class="form-label-small d-block mb-1">Activity (min)</label>
+          {{ form.physical_activity_minutes }}
         </div>
-      </div>
-    </div>
 
-    <!-- Notes -->
-    <div class="mb-2">
-      <div class="form-label-small">Notes</div>
-      {{ form.notes }}
-      <div class="form-help">
-        Anything else that might matter (food, hormones, stress event, travel…).
-      </div>
-    </div>
+        <div class="col-6">
+          <label class="form-label-small d-block mb-1">Stress lv (1–5)</label>
+          {{ form.stress_level }}
+        </div>
+        <div class="col-6">
+          <label class="form-label-small d-block mb-1">Caffeine (mg)</label>
+          {{ form.caffeine_mg }}
+        </div>
 
-    <button type="submit" class="btn btn-accent w-100 mt-2">
-      Save log
-    </button>
+        <div class="col-12">
+            <hr class="border-secondary opacity-25">
+        </div>
+
+        <!-- Migraine section -->
+        <div class="col-12">
+            <div class="form-check form-switch bg-dark bg-opacity-25 p-3 rounded-3 border border-secondary border-opacity-10 d-flex align-items-center">
+              {{ form.had_migraine }}
+              <label class="form-check-label fw-bold ms-3 mt-1" for="{{ form.had_migraine.id_for_label }}">
+                Did you have a migraine?
+              </label>
+            </div>
+        </div>
+
+        <div id="migraine-fields-container" class="col-12" style="transition: opacity 0.3s ease;">
+            <div class="row g-4">
+                <div class="col-6">
+                    <label class="form-label-small d-block mb-1">Intensity (0–10)</label>
+                    {{ form.migraine_intensity }}
+                </div>
+                <div class="col-6">
+                    <label class="form-label-small d-block mb-1">Duration (hours)</label>
+                    {{ form.migraine_duration_hours }}
+                </div>
+                <div class="col-12">
+                    <label class="form-label-small d-block mb-1">Medication taken</label>
+                    {{ form.meds_taken }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <label class="form-label-small d-block mb-1">Additional Notes</label>
+            {{ form.notes }}
+        </div>
+
+        <div class="col-12 mt-4">
+            <button type="submit" class="btn btn-accent btn-lg w-100 shadow-sm py-2 fw-bold">
+                <i class="bi bi-save me-2"></i>{% if is_edit %}Update Log{% else %}Save Log{% endif %}
+            </button>
+
+            {% if is_edit %}
+              <a href="{% url 'tracker:delete_log' log_pk %}" class="btn btn-outline-danger w-100 mt-3 py-2 border-0">
+                <i class="bi bi-trash me-2"></i>Delete entry
+              </a>
+            {% endif %}
+        </div>
+    </div>
   </form>
 
-  <p class="small text-soft">
-    Weather at the time of logging is saved automatically and will later be used
-    to estimate your migraine risk.
-  </p>
+  <div class="mt-4 p-3 text-soft small text-center opacity-75">
+    <i class="bi bi-info-circle me-1"></i>
+    Weather data will be automatically synced based on your city.
+  </div>
+</div>
+
+<style>
+    .log-input:disabled {
+        opacity: 0.3;
+        background-color: #0d1218 !important;
+        cursor: not-allowed;
+        border-color: rgba(187, 225, 250, 0.05) !important;
+    }
+</style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-  (function() {
-    const checkbox = document.getElementById("{{ form.had_migraine.id_for_label }}") ||
-                     document.querySelector('input[name="{{ form.had_migraine.name }}"]');
-    const migraineFields = document.getElementById("migraine-fields");
+  document.addEventListener("DOMContentLoaded", function() {
+    const checkbox = document.getElementById("{{ form.had_migraine.id_for_label }}");
+    const intensity = document.getElementById("{{ form.migraine_intensity.id_for_label }}");
+    const duration = document.getElementById("{{ form.migraine_duration_hours.id_for_label }}");
+    const meds = document.getElementById("{{ form.meds_taken.id_for_label }}");
+    const container = document.getElementById("migraine-fields-container");
 
-    function updateVisibility() {
-      if (!checkbox) return;
-      if (checkbox.checked) {
-        migraineFields.classList.remove("d-none");
-      } else {
-        migraineFields.classList.add("d-none");
+    function updateMigraineFields() {
+      const isChecked = checkbox.checked;
+      [intensity, duration, meds].forEach(field => {
+        if (field) {
+          field.disabled = !isChecked;
+          if (!isChecked) {
+              field.required = false;
+          }
+        }
+      });
+
+      if (container) {
+          container.style.opacity = isChecked ? "1" : "0.4";
+          container.style.pointerEvents = isChecked ? "auto" : "none";
       }
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-      updateVisibility();
-      if (checkbox) {
-        checkbox.addEventListener("change", updateVisibility);
-      }
-    });
-  })();
+    if (checkbox) {
+      checkbox.addEventListener("change", updateMigraineFields);
+      updateMigraineFields();
+    }
+  });
 </script>
 {% endblock %}
