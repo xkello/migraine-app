@@ -19,6 +19,8 @@ media/
 
 # Local Django settings
 migraine_site/settings_local.py
+migraine_site/settings.py
 
 # SQLite (local dev DB)
 db.sqlite3
+
