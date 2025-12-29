@@ -87,9 +87,9 @@ DATABASES = {
     }
 }
 
-+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY", "9d4d68e8d2dcc76b2cfc8e1132b0975f")
-+OWM_API_BASE = os.getenv("OWM_API_BASE", "https://api.openweathermap.org")
-+OWM_HISTORY_BASE = os.getenv("OWM_HISTORY_BASE", "https://history.openweathermap.org")
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY", "9d4d68e8d2dcc76b2cfc8e1132b0975f")
+OWM_API_BASE = os.getenv("OWM_API_BASE", "https://api.openweathermap.org")
+OWM_HISTORY_BASE = os.getenv("OWM_HISTORY_BASE", "https://history.openweathermap.org")
 
 # Cache (Persistent after restart)
 CACHES = {
