@@ -27,6 +27,23 @@
   {% block content %}{% endblock %}
 </main>
 
+<!-- Toast Container -->
+<div id="toast-container" class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 10000;"></div>
+
+<!-- Django Messages to JS -->
+{% if messages %}
+<script id="django-messages" type="application/json">
+[
+  {% for message in messages %}
+  {
+    "message": "{{ message|escapejs }}",
+    "level_tag": "{{ message.tags }}"
+  }{% if not forloop.last %},{% endif %}
+  {% endfor %}
+]
+</script>
+{% endif %}
+
 <!-- Bottom navigation bar -->
 <nav class="bottom-nav fixed-bottom">
   <div class="bottom-nav-inner">
@@ -65,6 +82,8 @@
 
 <!-- Chart.js for graphs -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="{% static 'tracker/js/main.js' %}"></script>
 
 {% block extra_js %}{% endblock %}
 </body>

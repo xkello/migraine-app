@@ -196,6 +196,8 @@ def log_day(request):
             except Exception as e:
                 logger.warning("Weather fetch failed for %s on %s: %s", city, log.date, e)
                 weather = None
+                from django.contrib import messages
+                messages.warning(request, "Weather data was unavailable for this date.")
 
             if weather:
                 log.weather_temp_c = weather.get("temp")
@@ -206,6 +208,8 @@ def log_day(request):
                 log.weather_description = weather.get("description") or ""
 
             log.save()
+            from django.contrib import messages
+            messages.success(request, "Log updated successfully!")
             return redirect("tracker:home")
     else:
         form = DailyLogForm(initial=initial)
@@ -241,6 +245,8 @@ def edit_log(request, pk):
                 pass
 
             log.save()
+            from django.contrib import messages
+            messages.success(request, "Changes saved!")
             return redirect("tracker:profile")
     else:
         form = DailyLogForm(instance=log)
@@ -273,6 +279,8 @@ def profile(request):
         form = ProfileForm(request.POST, instance=user_profile)
         if form.is_valid():
             form.save()
+            from django.contrib import messages
+            messages.success(request, "Profile updated!")
             return redirect("tracker:profile")
     else:
         form = ProfileForm(instance=user_profile)

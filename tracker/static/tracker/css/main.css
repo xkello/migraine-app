@@ -174,3 +174,22 @@ input[type=number] {
     color: rgba(255, 255, 255, 0.4);
     font-weight: 500;
 }
+
+/* Custom Toasts */
+.toast-custom {
+    min-width: 250px;
+    background: rgba(11, 21, 30, 0.95);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid var(--accent);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    backdrop-filter: blur(8px);
+    transition: opacity 0.3s ease;
+}
+
+.toast-success { border-left-color: #28a745; }
+.toast-error   { border-left-color: #dc3545; }
+.toast-warning { border-left-color: #ffc107; }
+.toast-info    { border-left-color: var(--accent); }

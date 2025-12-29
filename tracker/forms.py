@@ -25,6 +25,7 @@ class DailyLogForm(forms.ModelForm):
             existing_classes = field.widget.attrs.get("class", "")
             if field_name == "had_migraine":
                 field.widget.attrs["class"] = f"{existing_classes} form-check-input".strip()
+                field.widget.attrs["data-toggle-migraine"] = "true"
             elif field_name == "notes":
                 field.widget.attrs["class"] = f"{existing_classes} form-control log-input".strip()
                 field.widget.attrs["rows"] = 3

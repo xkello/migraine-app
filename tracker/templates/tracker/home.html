@@ -182,7 +182,7 @@
 
 {% block extra_js %}
 <script>
-  // Data from Django (already valid JSON strings)
+  // Data from Django
   const labels = {{ labels_json|default:"[]"|safe }};
   const sleepData = {{ sleep_json|default:"[]"|safe }};
   const activityData = {{ activity_json|default:"[]"|safe }};
@@ -198,321 +198,74 @@
   const tempData = {{ weather_temp_json|default:"[]"|safe }};
   const humidityData = {{ weather_humidity_json|default:"[]"|safe }};
 
-  function fmtLabel(isoDate) {
-      // isoDate: "2025-12-28"
-      const [y,m,d] = isoDate.split("-");
-      return `${d}.${m}`;
-  }
+  window.charts = {}; // id -> Chart instance
+  const fullLabels = labels.map(fmtLabel);
 
-  function sliceWindow(arr, start, size) {
-      return arr.slice(start, start + size);
+  // series config
+  window.series = {
+    sleepChart:    { labels: fullLabels, data: sleepData,    size: 6, start: Math.max(0, fullLabels.length - 6) },
+    activityChart: { labels: fullLabels, data: activityData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    stressChart:   { labels: fullLabels, data: stressData,   size: 6, start: Math.max(0, fullLabels.length - 6) },
+    caffeineChart: { labels: fullLabels, data: caffeineData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    migraineIntensityChart: { labels: fullLabels, data: migraineIntensityData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    migraineDurationChart:  { labels: fullLabels, data: migraineDurationData,  size: 6, start: Math.max(0, fullLabels.length - 6) },
+    migraineOccurrenceChart: { labels: fullLabels, data: hadMigraineFlags,      size: 6, start: Math.max(0, fullLabels.length - 6) }
+  };
+
+  const weatherLabels = weatherLabelsISO.map(fmtLabel);
+  window.weatherGroup = {
+    labels: weatherLabels,
+    size: 10,
+    step: 3,
+    start: Math.max(0, weatherLabels.length - 10),
+    pressure: pressureData,
+    temp: tempData,
+    humidity: humidityData
+  };
+
+  window.updateWeatherCharts = function() {
+    const len = weatherGroup.labels.length;
+    const start = clampStart(weatherGroup.start, weatherGroup.size, len);
+    weatherGroup.start = start;
+
+    const labels = sliceWindow(weatherGroup.labels, start, weatherGroup.size);
+    
+    const update = (id, data) => {
+        const c = charts[id];
+        if (!c) return;
+        c.data.labels = labels;
+        c.data.datasets[0].data = sliceWindow(data, start, weatherGroup.size);
+        c.update();
+    };
+
+    update("weatherPressureChart", weatherGroup.pressure);
+    update("weatherTempChart", weatherGroup.temp);
+    update("weatherHumidityChart", weatherGroup.humidity);
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    if (!labels || !labels.length || typeof Chart === "undefined") {
-      return;
-    }
+    if (!labels || !labels.length || typeof Chart === "undefined") return;
 
-    // Per-graph toggle buttons
-    document.querySelectorAll(".toggle-graph").forEach(btn => {
-      btn.addEventListener("click", function () {
-        const targetSelector = this.getAttribute("data-target");
-        const body = document.querySelector(targetSelector);
-        if (!body) return;
-
-        const icon = this.querySelector("i");
-        if (body.classList.contains("d-none")) {
-          body.classList.remove("d-none");
-          if (icon) {
-            icon.classList.remove("bi-chevron-down");
-            icon.classList.add("bi-chevron-up");
-          }
-        } else {
-          body.classList.add("d-none");
-          if (icon) {
-            icon.classList.remove("bi-chevron-up");
-            icon.classList.add("bi-chevron-down");
-          }
-        }
-      });
-    });
-
-    const fullLabels = labels.map(fmtLabel);
-
-    // ---- helpers ----
-    function hasAnyData(arr) {
-        if (!arr || !arr.length) return false;
-        return arr.some(v => v !== null && v !== undefined);
-    }
-
-    function showNoDataMessage(canvasId) {
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return;
-        const parent = canvas.parentElement;
-        if (parent.querySelector(".no-data-msg")) return;
-
-        const msg = document.createElement("div");
-        msg.className = "no-data-msg text-soft small text-center w-100 position-absolute start-0 top-50 translate-middle-y";
-        msg.innerText = "No data yet";
-        parent.style.position = "relative";
-        parent.appendChild(msg);
-        canvas.style.opacity = "0.2";
-    }
-
-    function clampStart(start, size, len) {
-      if (len <= size) return 0;
-      return Math.max(0, Math.min(start, len - size));
-    }
-
-    function getWindow(cfg) {
-      const len = (cfg.labels || []).length;
-      const start = clampStart(cfg.start || 0, cfg.size, len);
-      return {
-        labels: sliceWindow(cfg.labels, start, cfg.size),
-        data: sliceWindow(cfg.data, start, cfg.size),
-        start
-      };
-    }
-
-    function updateSingleChart(chart, cfg) {
-      if (!chart || !cfg || !Array.isArray(cfg.data) || !Array.isArray(cfg.labels)) return;
-
-      const win = getWindow(cfg);
-      cfg.start = win.start;
-
-      chart.data.labels = win.labels;
-      chart.data.datasets[0].data = win.data;
-      chart.update();
-    }
-
-    const charts = {}; // id -> Chart instance
-
-    // series config (IMPORTANT: use JS variables, not template tags)
-    const series = {
-      sleepChart:    { labels: fullLabels, data: sleepData,    size: 7, start: Math.max(0, fullLabels.length - 7) },
-      activityChart: { labels: fullLabels, data: activityData, size: 7, start: Math.max(0, fullLabels.length - 7) },
-      stressChart:   { labels: fullLabels, data: stressData,   size: 7, start: Math.max(0, fullLabels.length - 7) },
-      caffeineChart: { labels: fullLabels, data: caffeineData, size: 7, start: Math.max(0, fullLabels.length - 7) },
+    // Initialize Weather
+    const w0 = {
+        labels: sliceWindow(weatherGroup.labels, weatherGroup.start, weatherGroup.size),
+        pressure: sliceWindow(weatherGroup.pressure, weatherGroup.start, weatherGroup.size),
+        temp: sliceWindow(weatherGroup.temp, weatherGroup.start, weatherGroup.size),
+        humidity: sliceWindow(weatherGroup.humidity, weatherGroup.start, weatherGroup.size)
     };
-
-    // migraine series (7-day paging like health)
-    series.migraineIntensityChart = {
-      labels: fullLabels,
-      data: migraineIntensityData,
-      size: 7,
-      start: Math.max(0, fullLabels.length - 7)
-    };
-
-    series.migraineDurationChart = {
-      labels: fullLabels,
-      data: migraineDurationData,
-      size: 7,
-      start: Math.max(0, fullLabels.length - 7)
-    };
-
-    series.migraineOccurrenceChart = {
-      labels: fullLabels,
-      data: hadMigraineFlags,
-      size: 7,
-      start: Math.max(0, fullLabels.length - 7)
-    };
-
-    createLineChart("migraineIntensityChart", "Intensity (0–10)", "#BBE1FA", series.migraineIntensityChart);
-    createLineChart("migraineDurationChart", "Duration (hours)", "#3282B8", series.migraineDurationChart);
-    createBarChart("migraineOccurrenceChart", "Had migraine (0/1)", "#0F4C75", series.migraineOccurrenceChart);
-
-    const weatherLabels = weatherLabelsISO.map(fmtLabel);
-
-    // fixed window: 7 past incl today + 3 future = 10 points
-    const weatherGroup = {
-      labels: weatherLabels,
-      size: 10,      // 7 past + 3 future window look
-      step: 3,       // move by 3 days each click
-      start: Math.max(0, weatherLabels.length - 10), // start at "latest window"
-      pressure: pressureData,
-      temp: tempData,
-      humidity: humidityData,
-    };
-
-    document.querySelectorAll(".weather-prev").forEach(btn => {
-      btn.addEventListener("click", () => {
-        weatherGroup.start -= weatherGroup.step;
-        updateWeatherCharts();
-      });
-    });
-
-    document.querySelectorAll(".weather-next").forEach(btn => {
-      btn.addEventListener("click", () => {
-        weatherGroup.start += weatherGroup.step;
-        updateWeatherCharts();
-      });
-    });
-
-    function createWeatherLine(canvasId, label, color, labelsArr, dataArr, fullData) {
-      const el = document.getElementById(canvasId);
-      if (!el) return;
-
-      if (!hasAnyData(fullData || dataArr)) {
-        showNoDataMessage(canvasId);
-      }
-
-      charts[canvasId] = new Chart(el, {
-        type: "line",
-        data: {
-          labels: labelsArr,
-          datasets: [{
-            label,
-            data: dataArr,
-            borderColor: color,
-            backgroundColor: "transparent",
-            tension: 0.35,
-            pointRadius: 3
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { labels: { color: "#BBE1FA" } } },
-          scales: {
-            x: { ticks: { color: "#BBE1FA" }, grid: { color: "rgba(187,225,250,0.08)" } },
-            y: { ticks: { color: "#BBE1FA" }, grid: { color: "rgba(187,225,250,0.08)" } }
-          }
-        }
-      });
-    }
-
-    function getWeatherWindow() {
-      const len = weatherGroup.labels.length;
-      const start = clampStart(weatherGroup.start, weatherGroup.size, len);
-
-      return {
-        start,
-        labels: sliceWindow(weatherGroup.labels, start, weatherGroup.size),
-        pressure: sliceWindow(weatherGroup.pressure, start, weatherGroup.size),
-        temp: sliceWindow(weatherGroup.temp, start, weatherGroup.size),
-        humidity: sliceWindow(weatherGroup.humidity, start, weatherGroup.size),
-      };
-    }
-
-    function updateWeatherCharts() {
-      const w = getWeatherWindow();
-      weatherGroup.start = w.start;
-
-      updateSingleChart(charts["weatherPressureChart"], { labels: weatherGroup.labels, data: weatherGroup.pressure, size: weatherGroup.size, start: weatherGroup.start });
-      updateSingleChart(charts["weatherTempChart"], { labels: weatherGroup.labels, data: weatherGroup.temp, size: weatherGroup.size, start: weatherGroup.start });
-      updateSingleChart(charts["weatherHumidityChart"], { labels: weatherGroup.labels, data: weatherGroup.humidity, size: weatherGroup.size, start: weatherGroup.start });
-    }
-
-    const w0 = getWeatherWindow();
-    weatherGroup.start = w0.start;
 
     createWeatherLine("weatherPressureChart", "Pressure (hPa)", "#3282B8", w0.labels, w0.pressure, weatherGroup.pressure);
     createWeatherLine("weatherTempChart", "Temperature (°C)", "#BBE1FA", w0.labels, w0.temp, weatherGroup.temp);
     createWeatherLine("weatherHumidityChart", "Humidity (%)", "#0F4C75", w0.labels, w0.humidity, weatherGroup.humidity);
 
-
-
-    // create charts (initialize with window slice, not full data)
-    function createLineChart(canvasId, label, color, cfg) {
-      const el = document.getElementById(canvasId);
-      if (!el) return;
-
-      if (!hasAnyData(cfg.data)) {
-        showNoDataMessage(canvasId);
-      }
-
-      const win = getWindow(cfg);
-
-      charts[canvasId] = new Chart(el, {
-        type: "line",
-        data: {
-          labels: win.labels,
-          datasets: [{
-            label: label,
-            data: win.data,
-            borderColor: color,
-            backgroundColor: "transparent",
-            tension: 0.35,
-            pointRadius: 3
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: "#BBE1FA" } }
-          },
-          scales: {
-            x: { ticks: { color: "#BBE1FA" }, grid: { color: "rgba(187,225,250,0.08)" } },
-            y: { ticks: { color: "#BBE1FA" }, grid: { color: "rgba(187,225,250,0.08)" } }
-          }
-        }
-      });
-    }
-
-    function createBarChart(canvasId, label, color, cfg) {
-      const el = document.getElementById(canvasId);
-      if (!el) return;
-
-      if (!hasAnyData(cfg.data)) {
-        showNoDataMessage(canvasId);
-      }
-
-      const win = getWindow(cfg);
-
-      charts[canvasId] = new Chart(el, {
-        type: "bar",
-        data: {
-          labels: win.labels,
-          datasets: [{
-            label: label,
-            data: win.data,
-            borderColor: color,
-            backgroundColor: color
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: "#BBE1FA" } }
-          },
-          scales: {
-            x: { ticks: { color: "#BBE1FA" }, grid: { color: "rgba(187,225,250,0.08)" } },
-            y: { ticks: { color: "#BBE1FA" }, grid: { color: "rgba(187,225,250,0.08)" } }
-          }
-        }
-      });
-    }
-
-    // create your health charts
+    // Initialize Health/Migraine
     createLineChart("sleepChart", "Sleep (hours)", "#3282B8", series.sleepChart);
     createBarChart("activityChart", "Activity (minutes)", "#0F4C75", series.activityChart);
     createLineChart("stressChart", "Stress (1–5)", "#BBE1FA", series.stressChart);
     createBarChart("caffeineChart", "Caffeine (mg)", "#3282B8", series.caffeineChart);
-
-    // paging buttons (safe)
-    document.querySelectorAll(".nav-prev").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const key = btn.dataset.chart;
-        const cfg = series[key];
-        if (!cfg) return;
-        cfg.start = (cfg.start || 0) - cfg.size;
-        updateSingleChart(charts[key], cfg);
-      });
-    });
-
-    document.querySelectorAll(".nav-next").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const key = btn.dataset.chart;
-        const cfg = series[key];
-        if (!cfg) return;
-        cfg.start = (cfg.start || 0) + cfg.size;
-        updateSingleChart(charts[key], cfg);
-      });
-    });
-
-
+    createLineChart("migraineIntensityChart", "Intensity (0–10)", "#BBE1FA", series.migraineIntensityChart);
+    createLineChart("migraineDurationChart", "Duration (hours)", "#3282B8", series.migraineDurationChart);
+    createBarChart("migraineOccurrenceChart", "Had migraine (0/1)", "#0F4C75", series.migraineOccurrenceChart);
   });
 </script>
 {% endblock %}
