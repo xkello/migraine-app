@@ -74,6 +74,109 @@
       </div>
     </div>
 
+  <!-- Caffeine -->
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Caffeine (mg)</span>
+        <div class="chart-nav">
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+        </div>
+      </div>
+      <div id="graph-caffeine" class="p-3 pt-1">
+        <canvas id="caffeineChart" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- MIGRAINE SECTION -->
+    <p class="mb-1 text-soft small">Your migraine data</p>
+    <!-- MIGRAINE INTENSITY -->
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Intensity (0-10)</span>
+        <div class="chart-nav">
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+        </div>
+      </div>
+      <div id="graph-intensity" class="p-3 pt-1">
+        <canvas id="migraineIntensityChart" height="180"></canvas>
+      </div>
+    </div>
+
+    <!-- MIGRAINE DURATION -->
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Duration (hours)</span>
+        <div class="chart-nav">
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+        </div>
+      </div>
+      <div id="graph-duration" class="p-3 pt-1">
+        <canvas id="migraineDurationChart" height="180"></canvas>
+      </div>
+    </div>
+
+    <!-- MIGRAINE OCCURRENCES -->
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Occurrences (0/1)</span>
+        <div class="chart-nav">
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+        </div>
+      </div>
+      <div id="graph-occurrence" class="p-3 pt-1">
+        <canvas id="migraineOccurrenceChart" height="180"></canvas>
+      </div>
+    </div>
+
+    <!-- WEATHER SECTION -->
+    <p class="mb-1 text-soft small">Weather data</p>
+
+    <!-- Pressure -->
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Pressure (hPa)</span>
+        <div class="chart-nav">
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+        </div>
+      </div>
+      <div id="graph-pressure" class="p-3 pt-1">
+        <canvas id="weatherPressureChart" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- Temperature -->
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Temperature (°C)</span>
+        <div class="chart-nav">
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+        </div>
+      </div>
+      <div id="graph-temp" class="p-3 pt-1">
+        <canvas id="weatherTempChart" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- Humidity -->
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Humidity (%)</span>
+        <div class="chart-nav">
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+        </div>
+      </div>
+      <div id="graph-humidity" class="p-3 pt-1">
+        <canvas id="weatherHumidityChart" height="140"></canvas>
+      </div>
+    </div>
+
 
   {% endif %}
 {% endblock %}
