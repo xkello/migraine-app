@@ -31,13 +31,14 @@
 
     <!-- HEALTH SECTION -->
     <p class="mb-1 text-soft small">Your health data</p>
+
     <!-- Sleep -->
-    <div class="card-glass">
-      <div class="d-flex align-items-center justify-content-center gap-3 px-3 pt-2 flex-nowrap">
-        <span class="small fw-semibold-no-margin text-nowrap">Sleep (hours)</span>
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="sleepChart">◀</button>
-            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="sleepChart">▶</button>
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Sleep (hours)</span>
+        <div class="chart-nav">
+            <button class="btn btn-sm btn-chart-nav nav-prev" data-chart="sleepChart" type="button">◀</button>
+            <button class="btn btn-sm btn-chart-nav nav-next" data-chart="sleepChart" type="button">▶</button>
         </div>
       </div>
       <div id="graph-sleep" class="p-3 pt-1">
@@ -46,12 +47,12 @@
     </div>
 
     <!-- Activity -->
-    <div class="card-glass">
-      <div class="d-flex align-items-center justify-content-center gap-3 px-3 pt-2 flex-nowrap">
-        <span class="small fw-semibold-no-margin text-nowrap">Physical activity (minutes)</span>
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="activityChart">◀</button>
-            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="activityChart">▶</button>
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Physical activity (minutes)</span>
+        <div class="chart-nav">
+            <button class="btn btn-sm btn-chart-nav nav-prev" data-chart="activityChart" type="button">◀</button>
+            <button class="btn btn-sm btn-chart-nav nav-next" data-chart="activityChart" type="button">▶</button>
         </div>
       </div>
       <div id="graph-activity" class="p-3 pt-1">
@@ -60,119 +61,16 @@
     </div>
 
     <!-- Stress -->
-    <div class="card-glass">
-      <div class="d-flex align-items-center justify-content-center gap-3 px-3 pt-2 flex-nowrap">
-        <span class="small fw-semibold-no-margin text-nowrap">Stress level (1 – 5)</span>
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="stressChart">◀</button>
-            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="stressChart">▶</button>
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Stress level (1 – 5)</span>
+        <div class="chart-nav">
+            <button class="btn btn-sm btn-chart-nav nav-prev" data-chart="stressChart" type="button">◀</button>
+            <button class="btn btn-sm btn-chart-nav nav-next" data-chart="stressChart" type="button">▶</button>
         </div>
       </div>
       <div id="graph-stress" class="p-3 pt-1">
         <canvas id="stressChart" height="140"></canvas>
-      </div>
-    </div>
-
-    <!-- Caffeine -->
-    <div class="card-glass">
-      <div class="d-flex align-items-center justify-content-center gap-3 px-3 pt-2 flex-nowrap">
-        <span class="small fw-semibold-no-margin text-nowrap">Caffeine (mg)</span>
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="caffeineChart">◀</button>
-            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="caffeineChart">▶</button>
-        </div>
-      </div>
-      <div id="graph-caffeine" class="p-3 pt-1">
-        <canvas id="caffeineChart" height="140"></canvas>
-      </div>
-    </div>
-
-    <!-- MIGRAINE SECTION -->
-    <p class="mb-1 text-soft small">Your migraine data</p>
-    <!-- MIGRAINE INTENSITY -->
-    <div class="card-glass">
-      <div class="d-flex align-items-center justify-content-center gap-3 px-3 pt-2 flex-nowrap">
-        <span class="small fw-semibold-no-margin text-nowrap">Intensity (0-10)</span>
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="migraineIntensityChart">◀</button>
-            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="migraineIntensityChart">▶</button>
-        </div>
-      </div>
-      <div id="graph-intensity" class="p-3 pt-1">
-        <canvas id="migraineIntensityChart" height="180"></canvas>
-      </div>
-    </div>
-
-    <!-- MIGRAINE DURATION -->
-    <div class="card-glass">
-      <div class="d-flex align-items-center justify-content-center gap-3 px-3 pt-2 flex-nowrap">
-        <span class="small fw-semibold-no-margin text-nowrap">Duration (hours)</span>
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="migraineDurationChart">◀</button>
-            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="migraineDurationChart">▶</button>
-        </div>
-      </div>
-      <div id="graph-duration" class="p-3 pt-1">
-        <canvas id="migraineDurationChart" height="180"></canvas>
-      </div>
-    </div>
-
-    <!-- MIGRAINE OCCURRENCES -->
-    <div class="card-glass">
-      <div class="d-flex align-items-center justify-content-center gap-3 px-3 pt-2 flex-nowrap">
-        <span class="small fw-semibold-no-margin text-nowrap">Occurrences (0/1)</span>
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-sm btn-link text-light p-0 nav-prev" data-chart="migraineOccurrenceChart">◀</button>
-            <button class="btn btn-sm btn-link text-light p-0 nav-next" data-chart="migraineOccurrenceChart">▶</button>
-        </div>
-      </div>
-      <div id="graph-occurrence" class="p-3 pt-1">
-        <canvas id="migraineOccurrenceChart" height="180"></canvas>
-      </div>
-    </div>
-
-    <!-- WEATHER SECTION -->
-    <p class="mb-1 text-soft small">Weather data</p>
-
-    <!-- Pressure -->
-    <div class="card-glass">
-      <div class="d-flex align-items-center justify-content-center gap-3 px-3 pt-2 flex-nowrap">
-        <span class="small fw-semibold-no-margin text-nowrap">Pressure (hPa)</span>
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-sm btn-link text-light p-0 weather-prev">◀</button>
-            <button class="btn btn-sm btn-link text-light p-0 weather-next">▶</button>
-        </div>
-      </div>
-      <div id="graph-pressure" class="p-3 pt-1">
-        <canvas id="weatherPressureChart" height="140"></canvas>
-      </div>
-    </div>
-
-    <!-- Temperature -->
-    <div class="card-glass">
-      <div class="d-flex align-items-center justify-content-center gap-3 px-3 pt-2 flex-nowrap">
-        <span class="small fw-semibold-no-margin text-nowrap">Temperature (°C)</span>
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-sm btn-link text-light p-0 weather-prev">◀</button>
-            <button class="btn btn-sm btn-link text-light p-0 weather-next">▶</button>
-        </div>
-      </div>
-      <div id="graph-temp" class="p-3 pt-1">
-        <canvas id="weatherTempChart" height="140"></canvas>
-      </div>
-    </div>
-
-    <!-- Humidity -->
-    <div class="card-glass">
-      <div class="d-flex align-items-center justify-content-center gap-3 px-3 pt-2 flex-nowrap">
-        <span class="small fw-semibold-no-margin text-nowrap">Humidity (%)</span>
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-sm btn-link text-light p-0 weather-prev">◀</button>
-            <button class="btn btn-sm btn-link text-light p-0 weather-next">▶</button>
-        </div>
-      </div>
-      <div id="graph-humidity" class="p-3 pt-1">
-        <canvas id="weatherHumidityChart" height="140"></canvas>
       </div>
     </div>
 

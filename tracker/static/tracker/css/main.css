@@ -25,6 +25,77 @@ body {
     margin-bottom: 0.5rem;
 }
 
+/* Chart card layout: title stays top-left; nav controls centered at top of card */
+.chart-card {
+    position: relative;
+}
+
+.chart-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: nowrap;
+}
+
+.chart-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Base nav styling */
+.chart-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+/* Center the nav at the top of the card (independent of the title) */
+.chart-nav--center-top {
+    position: absolute;
+    left: 50%;
+    top: 0.005rem;
+    transform: translateX(-50%);
+    z-index: 5;
+    flex-shrink: 0;
+}
+
+/* Chart nav buttons: match .btn-accent color scheme (compact icon buttons) */
+.btn-chart-nav {
+    background-color: var(--accent);
+    border: 1px solid rgba(187, 225, 250, 0.18);
+    color: #ffffff;
+    width: 25px;
+    height: 25px;
+    padding: 0;
+    line-height: 1;
+    border-radius: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-chart-nav:hover,
+.btn-chart-nav:focus {
+    background-color: #27689a;
+    border-color: #27689a;
+    color: #ffffff;
+}
+
+.btn-chart-nav:active {
+    transform: translateY(1px);
+}
+
+.btn-chart-nav:disabled,
+.btn-chart-nav.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
 /* Typography helpers */
 .metric-big {
     font-size: 2rem;
