@@ -5,15 +5,18 @@
 {% block content %}
 <div class="card-glass mb-4">
     <h2 class="h5 mb-3">Settings</h2>
-    <form method="post" class="d-flex flex-wrap align-items-center gap-3">
+    <form method="post">
         {% csrf_token %}
-        <div class="d-flex align-items-center gap-2">
+
+        <div class="profile-settings-row">
             <label for="{{ form.city.id_for_label }}" class="form-label-small mb-0">City:</label>
-            <div style="width: 180px;">
+
+            <div class="profile-city-input">
                 {{ form.city }}
             </div>
+
+            <button type="submit" class="btn btn-accent px-4">Update</button>
         </div>
-        <button type="submit" class="btn btn-accent px-4">Update</button>
 
         {% if form.city.errors %}
         <div class="w-100 mt-1 text-danger small">
@@ -27,67 +30,76 @@
 
 {% for log in logs %}
 <div class="card-glass mb-3">
-    <div class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-2">
-        <div class="d-flex align-items-center gap-2">
-            <h3 class="h5 mb-0 fw-bold" style="color: var(--accent-light); padding-left: 0;">{{ log.date|date:"D, d.m" }}</h3>
+    <div class="log-card-header mb-2 border-bottom border-secondary pb-2">
+        <div class="log-card-header-left">
+            <h3 class="log-card-date h5 mb-0 fw-bold" style="color: var(--accent-light); padding-left: 0;">
+                {{ log.date|date:"D, d.m" }}
+            </h3>
+
             {% if log.had_migraine %}
             <span class="badge bg-danger p-1 small"><i class="bi bi-exclamation-triangle-fill"></i></span>
             {% else %}
             <span class="badge bg-success p-1 small"><i class="bi bi-check-circle-fill"></i></span>
             {% endif %}
         </div>
-        <div class="d-flex gap-2">
-            <a href="{% url 'tracker:edit_log' log.pk %}" class="btn btn-sm btn-accent d-flex align-items-center gap-1">
-                <i class="bi bi-pencil-square"></i> <span>Edit</span>
+
+        <div class="log-card-actions">
+            <a href="{% url 'tracker:edit_log' log.pk %}" class="btn-icon btn-icon--md btn-icon--accent" aria-label="Edit log">
+                <i class="bi bi-pencil-square"></i>
             </a>
-            <a href="{% url 'tracker:delete_log' log.pk %}" class="btn btn-sm btn-danger d-flex align-items-center gap-1">
-                <i class="bi bi-trash"></i> <span>Delete</span>
+            <a href="{% url 'tracker:delete_log' log.pk %}" class="btn-icon btn-icon--md btn-icon--danger" aria-label="Delete log">
+                <i class="bi bi-trash"></i>
             </a>
         </div>
     </div>
 
-    <div class="row g-2 text-center">
-        <div class="col-3">
-            <div class="text-soft x-small" style="font-size: 0.65rem;">Sleep</div>
-            <div class="fw-bold small">{{ log.sleep_hours }}h</div>
+    <div class="log-metrics">
+        <div class="log-metric">
+            <div class="log-metric-label">Sleep</div>
+            <div class="log-metric-value">{{ log.sleep_hours }}h</div>
         </div>
-        <div class="col-3">
-            <div class="text-soft x-small" style="font-size: 0.65rem;">Activity</div>
-            <div class="fw-bold small">{{ log.physical_activity_minutes }}m</div>
+
+        <div class="log-metric">
+            <div class="log-metric-label">Activity</div>
+            <div class="log-metric-value">{{ log.physical_activity_minutes }}m</div>
         </div>
-        <div class="col-3">
-            <div class="text-soft x-small" style="font-size: 0.65rem;">Stress</div>
-            <div class="fw-bold small">{{ log.stress_level }}/5</div>
-        </div>
-        <div class="col-3">
-            <div class="text-soft x-small" style="font-size: 0.65rem;">Caffeine</div>
-            <div class="fw-bold small">{{ log.caffeine_mg }}mg</div>
+
+        <div class="log-metric">
+            <div class="log-metric-label">Stress</div>
+            <div class="log-metric-value">{{ log.stress_level }}/5</div>
         </div>
 
         {% if log.had_migraine %}
-        <div class="col-3">
-            <div class="text-soft x-small text-danger-emphasis" style="font-size: 0.65rem;">Int.</div>
-            <div class="fw-bold small text-danger">{{ log.migraine_intensity }}</div>
+        <div class="log-metric is-danger">
+            <div class="log-metric-label text-danger-emphasis">Int.</div>
+            <div class="log-metric-value text-danger">{{ log.migraine_intensity }}</div>
         </div>
-        <div class="col-3">
-            <div class="text-soft x-small text-danger-emphasis" style="font-size: 0.65rem;">Dur.</div>
-            <div class="fw-bold small text-danger">{{ log.migraine_duration_hours }}h</div>
+
+        <div class="log-metric is-danger">
+            <div class="log-metric-label text-danger-emphasis">Dur.</div>
+            <div class="log-metric-value text-danger">{{ log.migraine_duration_hours }}h</div>
         </div>
-        <div class="col-6">
-            <div class="text-soft x-small" style="font-size: 0.65rem;">Medication</div>
-            <div class="fw-bold small text-truncate">{{ log.meds_taken|default:"—" }}</div>
+
+        <div class="log-metric">
+            <div class="log-metric-label">Medication</div>
+            <div class="log-metric-value log-metric-truncate">{{ log.meds_taken|default:"—" }}</div>
         </div>
         {% endif %}
+
+        <div class="log-metric">
+            <div class="log-metric-label">Caffeine</div>
+            <div class="log-metric-value">{{ log.caffeine_mg }}mg</div>
+        </div>
     </div>
 
     {% if log.weather_temp_c is not None %}
     <div class="mt-2">
-         <div class="bg-dark bg-opacity-25 p-2 rounded border border-secondary border-opacity-10 d-flex justify-content-between align-items-center small" style="font-size: 0.75rem;">
-             <span><i class="bi bi-thermometer-half text-accent"></i> {{ log.weather_temp_c|floatformat:0 }}°</span>
-             <span><i class="bi bi-droplets text-accent"></i> {{ log.weather_humidity }}%</span>
-             <span><i class="bi bi-speedometer2 text-accent"></i> {{ log.weather_pressure_hpa }}</span>
-             <span class="text-truncate" style="max-width: 80px;"><i class="bi bi-cloud-sun text-accent"></i> {{ log.weather_description }}</span>
-         </div>
+        <div class="log-weather">
+            <span><i class="bi bi-thermometer-half text-accent"></i> {{ log.weather_temp_c|floatformat:0 }}°</span>
+            <span><i class="bi bi-droplets text-accent"></i> {{ log.weather_humidity }}%</span>
+            <span><i class="bi bi-speedometer2 text-accent"></i> {{ log.weather_pressure_hpa }}</span>
+            <span class="log-weather-desc"><i class="bi bi-cloud-sun text-accent"></i> {{ log.weather_description }}</span>
+        </div>
     </div>
     {% endif %}
 

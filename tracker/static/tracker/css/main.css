@@ -25,7 +25,123 @@ body {
     margin-bottom: 0.5rem;
 }
 
-/* Chart card layout: title stays top-left; nav controls centered at top of card */
+/* Profile CSS */
+/* Profile settings: City input then button on the right */
+.profile-settings-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap;
+}
+
+.profile-city-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-city-input input,
+.profile-city-input select,
+.profile-city-input textarea {
+    width: 100%;
+}
+
+/* Log card header: Date - Symbol on the left, buttons pinned to right */
+.log-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: nowrap;
+}
+
+.log-card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex-wrap: nowrap;
+}
+
+.log-card-date {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.log-card-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+}
+
+/* Unified icon button (use for chart arrows + edit/delete buttons) */
+.btn-icon {
+    border: 1px solid rgba(187, 225, 250, 0.18);
+    color: #ffffff;
+    padding: 0;
+    line-height: 1;
+    border-radius: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-icon:hover,
+.btn-icon:focus {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.btn-icon:active {
+    transform: translateY(1px);
+}
+
+.btn-icon:disabled,
+.btn-icon.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Sizes */
+.btn-icon--sm {
+    width: 25px;
+    height: 25px;
+}
+
+.btn-icon--md {
+    width: 28px;
+    height: 28px;
+}
+
+/* Color variants */
+.btn-icon--accent {
+    background-color: var(--accent);
+}
+
+.btn-icon--accent:hover,
+.btn-icon--accent:focus {
+    background-color: #27689a;
+    border-color: #27689a;
+}
+
+.btn-icon--danger {
+    background-color: #dc3545;
+}
+
+.btn-icon--danger:hover,
+.btn-icon--danger:focus {
+    background-color: #b52a37;
+    border-color: #b52a37;
+}
+
+/* Chart card layout */
 .chart-card {
     position: relative;
 }
@@ -46,7 +162,6 @@ body {
     white-space: nowrap;
 }
 
-/* Base nav styling */
 .chart-nav {
     display: inline-flex;
     align-items: center;
@@ -264,3 +379,66 @@ input[type=number] {
 .toast-error   { border-left-color: #dc3545; }
 .toast-warning { border-left-color: #ffc107; }
 .toast-info    { border-left-color: var(--accent); }
+
+/* Log metrics grid: 4 per row, wraps automatically (so migraine logs become 2 rows) */
+.log-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+    text-align: center;
+}
+
+.log-metric {
+    min-width: 0; /* allows truncation inside */
+}
+
+.log-metric-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.65rem;
+    line-height: 1.1;
+}
+
+.log-metric-value {
+    font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 1.15;
+}
+
+.log-metric-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Weather row: make it a bit bigger to match the rest */
+.log-weather {
+    background: rgba(0, 0, 0, 0.25);
+    padding: 0.55rem 0.65rem;
+    border-radius: 0.6rem;
+    border: 1px solid rgba(187, 225, 250, 0.10);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+
+    font-size: 0.9rem; /* bigger than before */
+}
+
+.log-weather-desc {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 120px;
+}
+
+/* Keep it readable on very small widths */
+@media (max-width: 360px) {
+    .log-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .log-weather {
+        font-size: 0.85rem;
+    }
+}
