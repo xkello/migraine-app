@@ -23,9 +23,10 @@ class DailyLogForm(forms.ModelForm):
             if field_name == "date":
                 continue # Already handled
             existing_classes = field.widget.attrs.get("class", "")
-            if field_name == "had_migraine":
+            if field_name == "had_migraine" or field_name == "menstruation" or field_name == "show_menstruation":
                 field.widget.attrs["class"] = f"{existing_classes} form-check-input".strip()
-                field.widget.attrs["data-toggle-migraine"] = "true"
+                if field_name == "had_migraine":
+                    field.widget.attrs["data-toggle-migraine"] = "true"
             elif field_name == "notes":
                 field.widget.attrs["class"] = f"{existing_classes} form-control log-input".strip()
                 field.widget.attrs["rows"] = 3
@@ -80,11 +81,14 @@ class DailyLogForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ["city"]
+        fields = ["city", "show_menstruation"]
         widgets = {
             "city": forms.TextInput(attrs={
                 "class": "form-control log-input",
                 "placeholder": "Enter city name..."
+            }),
+            "show_menstruation": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
             })
         }
 

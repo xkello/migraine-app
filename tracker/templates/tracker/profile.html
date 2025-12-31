@@ -8,14 +8,25 @@
     <form method="post">
         {% csrf_token %}
 
-        <div class="profile-settings-row">
+        <div class="profile-settings-row mb-3">
             <label for="{{ form.city.id_for_label }}" class="form-label-small mb-0">City:</label>
 
             <div class="profile-city-input">
                 {{ form.city }}
             </div>
+        </div>
 
-            <button type="submit" class="btn btn-accent px-4">Update</button>
+        <div class="profile-settings-row mb-3">
+            <div class="form-check form-switch">
+                {{ form.show_menstruation }}
+                <label class="form-check-label form-label-small" for="{{ form.show_menstruation.id_for_label }}">
+                    Show Menstruation Tracking
+                </label>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-accent px-4">Update Settings</button>
         </div>
 
         {% if form.city.errors %}
@@ -61,13 +72,35 @@
 
         <div class="log-metric">
             <div class="log-metric-label">Activity</div>
-            <div class="log-metric-value">{{ log.physical_activity_minutes }}m</div>
+            <div class="log-metric-value">{{ log.physical_activity_minutes }}m (lv {{ log.physical_activity_difficulty }})</div>
         </div>
 
         <div class="log-metric">
             <div class="log-metric-label">Stress</div>
             <div class="log-metric-value">{{ log.stress_level }}/5</div>
         </div>
+
+        <div class="log-metric">
+            <div class="log-metric-label">Meals</div>
+            <div class="log-metric-value">{{ log.heavy_meals }}</div>
+        </div>
+
+        <div class="log-metric">
+            <div class="log-metric-label">Hydration</div>
+            <div class="log-metric-value">{{ log.hydration_liters }}l</div>
+        </div>
+
+        <div class="log-metric">
+            <div class="log-metric-label">Alcohol</div>
+            <div class="log-metric-value">{{ log.alcohol_consumption }}/5</div>
+        </div>
+
+        {% if log.menstruation %}
+        <div class="log-metric">
+            <div class="log-metric-label">Period</div>
+            <div class="log-metric-value text-accent"><i class="bi bi-droplet-fill"></i></div>
+        </div>
+        {% endif %}
 
         {% if log.had_migraine %}
         <div class="log-metric is-danger">

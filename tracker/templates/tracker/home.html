@@ -60,6 +60,20 @@
       </div>
     </div>
 
+    <!-- Activity Difficulty -->
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Activity Difficulty (0-5)</span>
+        <div class="chart-nav">
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="activityDifficultyChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="activityDifficultyChart" type="button">▶</button>
+        </div>
+      </div>
+      <div id="graph-activity-difficulty" class="p-3 pt-1">
+        <canvas id="activityDifficultyChart" height="140"></canvas>
+      </div>
+    </div>
+
     <!-- Stress -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
@@ -74,17 +88,59 @@
       </div>
     </div>
 
-  <!-- Caffeine -->
+    <!-- Caffeine -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
         <span class="chart-title small fw-semibold-no-margin text-nowrap">Caffeine (mg)</span>
         <div class="chart-nav">
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="caffeineChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="caffeineChart" type="button">▶</button>
         </div>
       </div>
       <div id="graph-caffeine" class="p-3 pt-1">
         <canvas id="caffeineChart" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- Heavy Meals -->
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Heavy Meals</span>
+        <div class="chart-nav">
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="heavyMealsChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="heavyMealsChart" type="button">▶</button>
+        </div>
+      </div>
+      <div id="graph-meals" class="p-3 pt-1">
+        <canvas id="heavyMealsChart" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- Hydration -->
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Hydration (liters)</span>
+        <div class="chart-nav">
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="hydrationChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="hydrationChart" type="button">▶</button>
+        </div>
+      </div>
+      <div id="graph-hydration" class="p-3 pt-1">
+        <canvas id="hydrationChart" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- Alcohol -->
+    <div class="card-glass chart-card">
+      <div class="chart-header px-3 pt-2">
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">Alcohol Consumption (0-5)</span>
+        <div class="chart-nav">
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="alcoholChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="alcoholChart" type="button">▶</button>
+        </div>
+      </div>
+      <div id="graph-alcohol" class="p-3 pt-1">
+        <canvas id="alcoholChart" height="140"></canvas>
       </div>
     </div>
 
@@ -95,8 +151,8 @@
       <div class="chart-header px-3 pt-2">
         <span class="chart-title small fw-semibold-no-margin text-nowrap">Intensity (0-10)</span>
         <div class="chart-nav">
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="migraineIntensityChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="migraineIntensityChart" type="button">▶</button>
         </div>
       </div>
       <div id="graph-intensity" class="p-3 pt-1">
@@ -109,8 +165,8 @@
       <div class="chart-header px-3 pt-2">
         <span class="chart-title small fw-semibold-no-margin text-nowrap">Duration (hours)</span>
         <div class="chart-nav">
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="migraineDurationChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="migraineDurationChart" type="button">▶</button>
         </div>
       </div>
       <div id="graph-duration" class="p-3 pt-1">
@@ -123,8 +179,8 @@
       <div class="chart-header px-3 pt-2">
         <span class="chart-title small fw-semibold-no-margin text-nowrap">Occurrences (0/1)</span>
         <div class="chart-nav">
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="migraineOccurrenceChart" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="migraineOccurrenceChart" type="button">▶</button>
         </div>
       </div>
       <div id="graph-occurrence" class="p-3 pt-1">
@@ -140,8 +196,8 @@
       <div class="chart-header px-3 pt-2">
         <span class="chart-title small fw-semibold-no-margin text-nowrap">Pressure (hPa)</span>
         <div class="chart-nav">
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent weather-prev" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent weather-next" type="button">▶</button>
         </div>
       </div>
       <div id="graph-pressure" class="p-3 pt-1">
@@ -154,8 +210,8 @@
       <div class="chart-header px-3 pt-2">
         <span class="chart-title small fw-semibold-no-margin text-nowrap">Temperature (°C)</span>
         <div class="chart-nav">
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent weather-prev" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent weather-next" type="button">▶</button>
         </div>
       </div>
       <div id="graph-temp" class="p-3 pt-1">
@@ -168,8 +224,8 @@
       <div class="chart-header px-3 pt-2">
         <span class="chart-title small fw-semibold-no-margin text-nowrap">Humidity (%)</span>
         <div class="chart-nav">
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
-            <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent weather-prev" type="button">◀</button>
+            <button class="btn-icon btn-icon--sm btn-icon--accent weather-next" type="button">▶</button>
         </div>
       </div>
       <div id="graph-humidity" class="p-3 pt-1">
@@ -189,6 +245,10 @@
   const activityData = {{ activity_json|default:"[]"|safe }};
   const stressData = {{ stress_json|default:"[]"|safe }};
   const caffeineData = {{ caffeine_json|default:"[]"|safe }};
+  const activityDifficultyData = {{ activity_difficulty_json|default:"[]"|safe }};
+  const heavyMealsData = {{ heavy_meals_json|default:"[]"|safe }};
+  const hydrationData = {{ hydration_json|default:"[]"|safe }};
+  const alcoholData = {{ alcohol_json|default:"[]"|safe }};
 
   const migraineIntensityData = {{ migraine_intensity_json|default:"[]"|safe }};
   const migraineDurationData = {{ migraine_duration_json|default:"[]"|safe }};
@@ -208,6 +268,10 @@
     activityChart: { labels: fullLabels, data: activityData, size: 6, start: Math.max(0, fullLabels.length - 6) },
     stressChart:   { labels: fullLabels, data: stressData,   size: 6, start: Math.max(0, fullLabels.length - 6) },
     caffeineChart: { labels: fullLabels, data: caffeineData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    activityDifficultyChart: { labels: fullLabels, data: activityDifficultyData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    heavyMealsChart: { labels: fullLabels, data: heavyMealsData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    hydrationChart: { labels: fullLabels, data: hydrationData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    alcoholChart: { labels: fullLabels, data: alcoholData, size: 6, start: Math.max(0, fullLabels.length - 6) },
     migraineIntensityChart: { labels: fullLabels, data: migraineIntensityData, size: 6, start: Math.max(0, fullLabels.length - 6) },
     migraineDurationChart:  { labels: fullLabels, data: migraineDurationData,  size: 6, start: Math.max(0, fullLabels.length - 6) },
     migraineOccurrenceChart: { labels: fullLabels, data: hadMigraineFlags,      size: 6, start: Math.max(0, fullLabels.length - 6) }
@@ -261,9 +325,13 @@
 
     // Initialize Health/Migraine
     createLineChart("sleepChart", "Sleep (hours)", "#3282B8", series.sleepChart);
-    createBarChart("activityChart", "Activity (minutes)", "#0F4C75", series.activityChart);
+    createBarChart("activityChart", "Physical activity (minutes)", "#0F4C75", series.activityChart);
     createLineChart("stressChart", "Stress (1–5)", "#BBE1FA", series.stressChart);
     createBarChart("caffeineChart", "Caffeine (mg)", "#3282B8", series.caffeineChart);
+    createLineChart("activityDifficultyChart", "Difficulty (0-5)", "#BBE1FA", series.activityDifficultyChart);
+    createBarChart("heavyMealsChart", "Heavy Meals", "#0F4C75", series.heavyMealsChart);
+    createLineChart("hydrationChart", "Hydration (liters)", "#3282B8", series.hydrationChart);
+    createBarChart("alcoholChart", "Alcohol (0-5)", "#BBE1FA", series.alcoholChart);
     createLineChart("migraineIntensityChart", "Intensity (0–10)", "#BBE1FA", series.migraineIntensityChart);
     createLineChart("migraineDurationChart", "Duration (hours)", "#3282B8", series.migraineDurationChart);
     createBarChart("migraineOccurrenceChart", "Had migraine (0/1)", "#0F4C75", series.migraineOccurrenceChart);

@@ -11,6 +11,7 @@ class UserProfile(models.Model):
     """
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     city = models.CharField(max_length=100, blank=True)
+    show_menstruation = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Profile({self.user.username})"
@@ -40,6 +41,25 @@ class DailyLog(models.Model):
     caffeine_mg = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(3000)]
     )
+
+    # New fields
+    physical_activity_difficulty = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
+    heavy_meals = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
+    hydration_liters = models.FloatField(
+        default=0.0,
+        validators=[MinValueValidator(0), MaxValueValidator(20)]
+    )
+    alcohol_consumption = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
+    menstruation = models.BooleanField(default=False)
 
     had_migraine = models.BooleanField(default=False)
     migraine_intensity = models.IntegerField(

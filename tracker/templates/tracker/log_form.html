@@ -23,18 +23,60 @@
           {{ form.sleep_hours }}
         </div>
         <div class="col-6">
-          <label class="form-label-small d-block mb-1">Activity (min)</label>
+          <label class="form-label-small d-block mb-1">Physical activity (min)</label>
           {{ form.physical_activity_minutes }}
+        </div>
+        <div class="col-6">
+          <label class="form-label-small d-block mb-1">Activity Difficulty (0–5)</label>
+          {{ form.physical_activity_difficulty }}
+            <div class="form-help">Activities where you strain your neck more, tend to be worse for your headache.</div>
         </div>
 
         <div class="col-6">
           <label class="form-label-small d-block mb-1">Stress lv (1–5)</label>
           {{ form.stress_level }}
+            <div class="form-help">1 = low stress, 5 = very stressful day</div>
         </div>
         <div class="col-6">
           <label class="form-label-small d-block mb-1">Caffeine (mg)</label>
           {{ form.caffeine_mg }}
+            <div class="form-help">
+                Espresso ~65mg,
+                Black tea ~55mg,
+                Green tea ~30mg,
+                Energy drinks vary for each drink.
+            </div>
         </div>
+
+        <div class="col-4">
+          <label class="form-label-small d-block mb-1">Heavy meals</label>
+          {{ form.heavy_meals }}
+            <div class="form-help">Number of heavy, high-calorie meals for this date.</div>
+        </div>
+        <div class="col-4">
+          <label class="form-label-small d-block mb-1">Hydration (l)</label>
+          {{ form.hydration_liters }}
+            <div class="form-help">Alcohol doesn't count :)</div>
+        </div>
+        <div class="col-4">
+          <label class="form-label-small d-block mb-1">Alcohol (0–5)</label>
+          {{ form.alcohol_consumption }}
+            <div class="form-help">
+                How much you drank.
+                Please note that some types of alcohol may be worse for you in your experience and therefore may have a higher score.
+            </div>
+        </div>
+
+        {% if user.userprofile.show_menstruation %}
+        <div class="col-12">
+            <div class="form-check form-switch bg-dark bg-opacity-25 p-3 rounded-3 border border-secondary border-opacity-10 d-flex align-items-center">
+              {{ form.menstruation }}
+              <label class="form-check-label fw-bold ms-3 mt-1" for="{{ form.menstruation.id_for_label }}">
+                Menstruation cycle
+              </label>
+            </div>
+        </div>
+        {% endif %}
 
         <div class="col-12">
             <hr class="border-secondary opacity-25">
@@ -63,6 +105,7 @@
                 <div class="col-12">
                     <label class="form-label-small d-block mb-1">Medication taken</label>
                     {{ form.meds_taken }}
+                    <div class="form-help">Upper/lower case doesn't matter here.</div>
                 </div>
             </div>
         </div>
@@ -70,6 +113,11 @@
         <div class="col-12">
             <label class="form-label-small d-block mb-1">Additional Notes</label>
             {{ form.notes }}
+            <div class="form-help">
+                Notes for you. Anything that you did during a day that might have helped you if you had migraine.
+                For example, I had a headache, and I took a nap, or I went for a walk.
+                Or on the other hand, things that might have worsened your headache or caused it.
+            </div>
         </div>
 
         <div class="col-12 mt-4">

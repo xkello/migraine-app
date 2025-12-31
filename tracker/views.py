@@ -39,6 +39,10 @@ def home(request):
     activity = [log.physical_activity_minutes or 0 for log in logs]
     stress = [log.stress_level or 0 for log in logs]
     caffeine = [log.caffeine_mg or 0 for log in logs]
+    activity_difficulty = [log.physical_activity_difficulty or 0 for log in logs]
+    heavy_meals = [log.heavy_meals or 0 for log in logs]
+    hydration = [num_or_none(log.hydration_liters) or 0 for log in logs]
+    alcohol = [log.alcohol_consumption or 0 for log in logs]
 
     migraine_intensity = [
         log.migraine_intensity if log.had_migraine and log.migraine_intensity is not None else 0
@@ -138,6 +142,10 @@ def home(request):
         "activity_json": json.dumps(activity),
         "stress_json": json.dumps(stress),
         "caffeine_json": json.dumps(caffeine),
+        "activity_difficulty_json": json.dumps(activity_difficulty),
+        "heavy_meals_json": json.dumps(heavy_meals),
+        "hydration_json": json.dumps(hydration),
+        "alcohol_json": json.dumps(alcohol),
 
         "migraine_intensity_json": json.dumps(migraine_intensity),
         "migraine_duration_json": json.dumps(migraine_duration),
