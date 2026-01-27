@@ -5,18 +5,49 @@
 {% block content %}
   <h2 class="h4 mb-3">Welcome back, {{ user_name }}</h2>
 
-  <div class="card-glass mb-4 p-3 border-start border-accent border-4">
+    <div class="card-glass mb-4 p-3 border-start border-accent border-4">
     <div class="d-flex align-items-center gap-3">
-        <div class="flex-grow-1">
-            <p class="mb-0 text-soft small text-uppercase fw-bold" style="letter-spacing: 1px;">Your Migraine Risk</p>
-            <div class="d-flex align-items-center gap-2">
-                <h3 class="h2 mb-0 fw-bold">Low</h3>
-                <i class="bi bi-shield-check text-success fs-3"></i>
+      <div class="flex-grow-1">
+        <p class="mb-1 text-soft small text-uppercase fw-bold" style="letter-spacing: 1px;">
+          Your Migraine Risk (Tomorrow)
+        </p>
+
+        {% if risk.available %}
+          <div class="risk-row">
+            <div class="risk-main">
+              <span class="risk-label">{{ risk.label }}</span>
+              <span class="risk-percent">{{ risk.percent }}%</span>
+              <i class="bi {{ risk.icon_css }} risk-icon" aria-hidden="true"></i>
             </div>
-        </div>
-    </div>
-    <div class="mt-2 small text-soft">
-        Why is the risk so low? Your sleep and stress levels have been optimal lately.
+
+            {% if risk.confidence %}
+              <span class="risk-confidence">{{ risk.confidence }}</span>
+            {% endif %}
+          </div>
+
+          <div class="mt-2 small text-soft risk-why">
+            <span class="risk-why-icon">
+              <i class="bi bi-info-circle text-accent"></i>
+            </span>
+            <span><strong>Why?</strong> {{ risk.summary }}</span>
+          </div>
+
+        {% else %}
+          <div class="risk-row">
+            <div class="risk-main">
+              <span class="risk-label">Not available yet</span>
+            </div>
+          </div>
+
+          <div class="mt-2 small text-soft risk-why">
+            <span class="risk-why-icon">
+              <i class="bi bi-info-circle text-accent"></i>
+            </span>
+            <span>{{ risk.summary }}</span>
+          </div>
+        {% endif %}
+
+      </div>
     </div>
   </div>
 

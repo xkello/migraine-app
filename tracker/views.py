@@ -12,6 +12,7 @@ from .forms import DailyLogForm, ProfileForm
 from .models import UserProfile, DailyLog
 from .services import openweather
 from datetime import timedelta, datetime
+from tracker.ml.predict import predict_next_day_risk
 
 
 
@@ -23,6 +24,60 @@ def home(request):
     qs = DailyLog.objects.filter(user=request.user).order_by("-date")[:120]
     logs = list(reversed(qs))
     has_data = len(logs) > 0
+
+    def risk_label(p: float) -> str:
+        # simple thresholds you can tweak later
+        if p < 0.20:
+            return "Low"
+        if p < 0.50:
+            return "Medium"
+        return "High"
+
+    def label_icon_css(label: str) -> str:
+        if label == "Low":
+            return "bi-check-circle-fill text-success"
+        if label == "Medium":
+            return "bi-exclamation-triangle-fill text-warning"
+        return "bi-exclamation-octagon-fill text-danger"
+
+    def friendly_feature_name(feat: str) -> str:
+        # Map ML feature names to user-friendly text
+        mapping = {
+            "sleep_hours": "Sleep",
+            "stress_level": "Stress",
+            "caffeine_mg": "Caffeine",
+            "hydration_liters": "Hydration",
+            "alcohol_consumption": "Alcohol",
+            "heavy_meals": "Heavy meals",
+            "physical_activity_minutes": "Physical activity",
+            "physical_activity_difficulty": "Activity difficulty",
+            "menstruation": "Menstruation",
+            "had_migraine_lag1": "Migraine yesterday",
+            "weather_pressure_hpa": "Pressure",
+            "weather_pressure_hpa_delta1": "Pressure change",
+            "weather_temp_c": "Temperature",
+            "weather_temp_c_delta1": "Temperature change",
+            "weather_humidity": "Humidity",
+            "weather_humidity_delta1": "Humidity change",
+        }
+        # Handle one-hot features like month_12 or weekday_3
+        if feat.startswith("month_"):
+            return f"Month ({feat.split('_', 1)[1]})"
+        if feat.startswith("weekday_"):
+            return f"Weekday ({feat.split('_', 1)[1]})"
+        # Handle lag/rolling generic patterns
+        if "_lag1" in feat:
+            base = feat.replace("_lag1", "")
+            return mapping.get(base, base) + " (yesterday)"
+        if "_roll_mean_" in feat:
+            base = feat.split("_roll_mean_", 1)[0]
+            w = feat.split("_roll_mean_", 1)[1]
+            return mapping.get(base, base) + f" (avg last {w} days)"
+        if "migraine_roll_sum_" in feat:
+            w = feat.split("migraine_roll_sum_", 1)[1]
+            return f"Migraine count (last {w} days)"
+        return mapping.get(feat, feat)
+
 
     def num_or_none(value):
         if value is None:
@@ -130,6 +185,66 @@ def home(request):
             w_pressure.append(None)
             w_humidity.append(None)
 
+    # ---- ML risk prediction (tomorrow risk using latest log) ----
+    risk = {
+        "available": False,
+        "percent": None,
+        "label": None,
+        "icon_css": None,
+        "summary": None,
+        "reasons_up": [],
+        "reasons_down": [],
+    }
+
+    if has_data:
+        try:
+            pred = predict_next_day_risk(user_id=request.user.id, with_explain=True)
+            if pred.get("ok"):
+                p = float(pred["p_final"])
+                risk["available"] = True
+                risk["percent"] = round(p * 100, 1)
+                n_days = len(logs)
+                if n_days < 30:
+                    risk["confidence"] = "Low confidence (limited history)"
+                elif n_days < 90:
+                    risk["confidence"] = "Medium confidence"
+                else:
+                    risk["confidence"] = "High confidence"
+                risk["label"] = risk_label(p)
+                risk["icon_css"] = label_icon_css(risk["label"])
+
+                # Build a short explanation from top contributors
+                expl = pred.get("explain") or {}
+                up = expl.get("top_positive", [])[:3]
+                down = expl.get("top_negative", [])[:2]
+
+                risk["reasons_up"] = [friendly_feature_name(x["feature"]) for x in up]
+                risk["reasons_down"] = [friendly_feature_name(x["feature"]) for x in down]
+
+                # Human-readable sentence
+                def compact_join(items):
+                    return ", ".join(items[:3])
+
+                if risk["reasons_up"] or risk["reasons_down"]:
+                    up_txt = compact_join(risk["reasons_up"])
+                    down_txt = compact_join(risk["reasons_down"])
+
+                    sentences = []
+                    if up_txt:
+                        sentences.append(f"Main factors increasing risk: {up_txt}.")
+                    if down_txt:
+                        sentences.append(f"Main factors decreasing risk: {down_txt}.")
+                    risk["summary"] = " ".join(sentences)
+                else:
+                    risk["summary"] = "Not enough signals yet."
+            else:
+                risk["summary"] = pred.get("reason", "Prediction unavailable.")
+        except Exception as e:
+            logger.warning("Risk prediction failed: %s", e)
+            risk["summary"] = "Prediction unavailable."
+    else:
+        risk["summary"] = "Add a few logs to get predictions."
+
     context = {
         "user_name": request.user.username or "friend",
         "has_data": has_data,
@@ -156,6 +271,8 @@ def home(request):
         "weather_temp_json": json.dumps(w_temp),
         "weather_pressure_json": json.dumps(w_pressure),
         "weather_humidity_json": json.dumps(w_humidity),
+
+        "risk": risk,
     }
     return render(request, "tracker/home.html", context)
 

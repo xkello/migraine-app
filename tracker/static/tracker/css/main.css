@@ -453,3 +453,52 @@ input[type=number] {
         font-size: 0.85rem;
     }
 }
+
+/* Risk card (Home) */
+.risk-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.risk-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.risk-label {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.risk-percent {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--accent-light);
+}
+
+.risk-icon {
+  font-size: 1.35rem;
+  transform: translateY(1px);
+}
+
+.risk-confidence {
+  font-size: 0.9rem;
+  color: var(--text-soft);
+  opacity: 0.9;
+}
+
+.risk-why {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.risk-why-icon {
+  line-height: 1.2;
+  margin-top: 2px;
+}
