@@ -1,5 +1,10 @@
 from django.contrib import admin
+from django.contrib.auth.forms import AuthenticationForm
 from .models import DailyLog, UserProfile
+
+# Allow non-staff users to log in via admin login page
+admin.site.login_form = AuthenticationForm
+admin.site.has_permission = lambda r: r.user.is_active
 
 
 @admin.register(DailyLog)

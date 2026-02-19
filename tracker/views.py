@@ -19,7 +19,7 @@ from tracker.ml.predict import predict_next_day_risk
 logger = logging.getLogger(__name__)
 CITY = getattr(settings, "DEFAULT_CITY", "Bratislava")
 
-@login_required(login_url="/admin/login/")
+@login_required
 def home(request):
     qs = DailyLog.objects.filter(user=request.user).order_by("-date")[:120]
     logs = list(reversed(qs))
@@ -277,7 +277,7 @@ def home(request):
     return render(request, "tracker/home.html", context)
 
 
-@login_required(login_url="/admin/login/")
+@login_required
 def log_day(request):
     initial = {"date": timezone.localdate()}
 
@@ -342,7 +342,7 @@ def log_day(request):
     return render(request, "tracker/log_form.html", {"form": form, "active_tab": "log"})
 
 
-@login_required(login_url="/admin/login/")
+@login_required
 def edit_log(request, pk):
     log = get_object_or_404(DailyLog, pk=pk, user=request.user)
     if request.method == "POST":
@@ -384,7 +384,7 @@ def edit_log(request, pk):
     })
 
 
-@login_required(login_url="/admin/login/")
+@login_required
 def delete_log(request, pk):
     log = get_object_or_404(DailyLog, pk=pk, user=request.user)
     if request.method == "POST":
@@ -393,7 +393,7 @@ def delete_log(request, pk):
     return render(request, "tracker/log_confirm_delete.html", {"log": log})
 
 
-@login_required(login_url="/admin/login/")
+@login_required
 def profile(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     if not user_profile.city:
