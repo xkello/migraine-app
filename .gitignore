@@ -12,6 +12,7 @@ venv/
 # Django
 staticfiles/
 media/
+django_cache/
 
 # VS Code / PyCharm
 .vscode/
