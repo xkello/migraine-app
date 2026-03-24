@@ -24,10 +24,15 @@ def root_redirect(request):
     # Force bare domain/root to default Slovak entry point.
     return redirect("/sk/")
 
+def legacy_redirect(request):
+    return redirect("/sk/")
+
 urlpatterns = [
     path("", root_redirect, name="root_redirect"),
     path("i18n/", include("django.conf.urls.i18n")),
     path("admin/", admin.site.urls),
+    path("log/", legacy_redirect, name="legacy_log_redirect"),
+    path("profile/", legacy_redirect, name="legacy_profile_redirect"),
 ]
 
 urlpatterns += i18n_patterns(
