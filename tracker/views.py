@@ -5,6 +5,8 @@ import logging
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from django.utils.translation import activate, gettext as _
+from django.urls import translate_url
 from django.conf import settings
 from django.core.cache import cache
 
@@ -28,54 +30,66 @@ def home(request):
     def risk_label(p: float) -> str:
         # simple thresholds you can tweak later
         if p < 0.20:
-            return "Low"
+            return _("Low")
         if p < 0.50:
-            return "Medium"
-        return "High"
+            return _("Medium")
+        return _("High")
 
     def label_icon_css(label: str) -> str:
-        if label == "Low":
+        if label == _("Low"):
             return "bi-check-circle-fill text-success"
-        if label == "Medium":
+        if label == _("Medium"):
             return "bi-exclamation-triangle-fill text-warning"
         return "bi-exclamation-octagon-fill text-danger"
 
     def friendly_feature_name(feat: str) -> str:
+        feat = (feat or "").strip().lower()
+
+        aliases = {
+            "humidity": "weather_humidity",
+            "humidity_change": "weather_humidity_delta1",
+            "pressure": "weather_pressure_hpa",
+            "pressure_change": "weather_pressure_hpa_delta1",
+            "temperature": "weather_temp_c",
+            "temperature_change": "weather_temp_c_delta1",
+        }
+        feat = aliases.get(feat, feat)
+
         # Map ML feature names to user-friendly text
         mapping = {
-            "sleep_hours": "Sleep",
-            "stress_level": "Stress",
-            "caffeine_mg": "Caffeine",
-            "hydration_liters": "Hydration",
-            "alcohol_consumption": "Alcohol",
-            "heavy_meals": "Heavy meals",
-            "physical_activity_minutes": "Physical activity",
-            "physical_activity_difficulty": "Activity difficulty",
-            "menstruation": "Menstruation",
-            "had_migraine_lag1": "Migraine yesterday",
-            "weather_pressure_hpa": "Pressure",
-            "weather_pressure_hpa_delta1": "Pressure change",
-            "weather_temp_c": "Temperature",
-            "weather_temp_c_delta1": "Temperature change",
-            "weather_humidity": "Humidity",
-            "weather_humidity_delta1": "Humidity change",
+            "sleep_hours": _("Sleep"),
+            "stress_level": _("Stress"),
+            "caffeine_mg": _("Caffeine"),
+            "hydration_liters": _("Hydration"),
+            "alcohol_consumption": _("Alcohol"),
+            "heavy_meals": _("Heavy meals"),
+            "physical_activity_minutes": _("Physical activity"),
+            "physical_activity_difficulty": _("Activity difficulty"),
+            "menstruation": _("Menstruation"),
+            "had_migraine_lag1": _("Migraine yesterday"),
+            "weather_pressure_hpa": _("Pressure"),
+            "weather_pressure_hpa_delta1": _("Pressure change"),
+            "weather_temp_c": _("Temperature"),
+            "weather_temp_c_delta1": _("Temperature change"),
+            "weather_humidity": _("Humidity"),
+            "weather_humidity_delta1": _("Humidity change"),
         }
         # Handle one-hot features like month_12 or weekday_3
         if feat.startswith("month_"):
-            return f"Month ({feat.split('_', 1)[1]})"
+            return _("Month ({month})").format(month=feat.split('_', 1)[1])
         if feat.startswith("weekday_"):
-            return f"Weekday ({feat.split('_', 1)[1]})"
+            return _("Weekday ({weekday})").format(weekday=feat.split('_', 1)[1])
         # Handle lag/rolling generic patterns
         if "_lag1" in feat:
             base = feat.replace("_lag1", "")
-            return mapping.get(base, base) + " (yesterday)"
+            return mapping.get(base, base) + " " + _("(yesterday)")
         if "_roll_mean_" in feat:
             base = feat.split("_roll_mean_", 1)[0]
             w = feat.split("_roll_mean_", 1)[1]
-            return mapping.get(base, base) + f" (avg last {w} days)"
+            return mapping.get(base, base) + " " + _("(avg last {w} days)").format(w=w)
         if "migraine_roll_sum_" in feat:
             w = feat.split("migraine_roll_sum_", 1)[1]
-            return f"Migraine count (last {w} days)"
+            return _("Migraine count (last {w} days)").format(w=w)
         return mapping.get(feat, feat)
 
 
@@ -205,11 +219,11 @@ def home(request):
                 risk["percent"] = round(p * 100, 1)
                 n_days = len(logs)
                 if n_days < 30:
-                    risk["confidence"] = "Low confidence (limited history)"
+                    risk["confidence"] = _("Low confidence (limited history)")
                 elif n_days < 90:
-                    risk["confidence"] = "Medium confidence"
+                    risk["confidence"] = _("Medium confidence")
                 else:
-                    risk["confidence"] = "High confidence"
+                    risk["confidence"] = _("High confidence")
                 risk["label"] = risk_label(p)
                 risk["icon_css"] = label_icon_css(risk["label"])
 
@@ -231,25 +245,28 @@ def home(request):
 
                     sentences = []
                     if up_txt:
-                        sentences.append(f"Main factors increasing risk: {up_txt}.")
+                        sentences.append(_("Main factors increasing risk: {up_txt}.").format(up_txt=up_txt))
                     if down_txt:
-                        sentences.append(f"Main factors decreasing risk: {down_txt}.")
+                        sentences.append(_("Main factors decreasing risk: {down_txt}.").format(down_txt=down_txt))
                     risk["summary"] = " ".join(sentences)
                 else:
-                    risk["summary"] = "Not enough signals yet."
+                    risk["summary"] = _("Not enough signals yet.")
             else:
-                risk["summary"] = pred.get("reason", "Prediction unavailable.")
+                risk["summary"] = _(pred.get("reason", "Prediction unavailable."))
         except Exception as e:
             logger.warning("Risk prediction failed: %s", e)
-            risk["summary"] = "Prediction unavailable."
+            risk["summary"] = _("Prediction unavailable.")
     else:
-        risk["summary"] = "Add a few logs to get predictions."
+        risk["summary"] = _("Add a few logs to get predictions.")
 
     context = {
-        "user_name": request.user.username or "friend",
+        "user_name": request.user.username or _("friend"),
         "has_data": has_data,
         "active_tab": "home",
         "logs": reversed(logs), # For the history list
+        "weather_pressure_label": _("Pressure (hPa)"),
+        "weather_temp_label": _("Temperature (°C)"),
+        "weather_humidity_label": _("Humidity (%)"),
 
         # JSON versions for the template
         "labels_json": json.dumps(labels),
@@ -305,7 +322,7 @@ def log_day(request):
 
             # safety (form also validates, but keep this)
             if log.date > timezone.localdate():
-                form.add_error("date", "You cannot log a future date.")
+                form.add_error("date", _("You cannot log a future date."))
                 return render(request, "tracker/log_form.html", {"form": form, "active_tab": "log"})
 
             # city
@@ -322,7 +339,7 @@ def log_day(request):
                 logger.warning("Weather fetch failed for %s on %s: %s", city, log.date, e)
                 weather = None
                 from django.contrib import messages
-                messages.warning(request, "Weather data was unavailable for this date.")
+                messages.warning(request, _("Weather data was unavailable for this date."))
 
             if weather:
                 log.weather_temp_c = weather.get("temp")
@@ -334,7 +351,7 @@ def log_day(request):
 
             log.save()
             from django.contrib import messages
-            messages.success(request, "Log updated successfully!")
+            messages.success(request, _("Log updated successfully!"))
             return redirect("tracker:home")
     else:
         form = DailyLogForm(initial=initial)
@@ -371,7 +388,7 @@ def edit_log(request, pk):
 
             log.save()
             from django.contrib import messages
-            messages.success(request, "Changes saved!")
+            messages.success(request, _("Changes saved!"))
             return redirect("tracker:profile")
     else:
         form = DailyLogForm(instance=log)
@@ -403,12 +420,32 @@ def profile(request):
     if request.method == "POST":
         form = ProfileForm(request.POST, instance=user_profile)
         if form.is_valid():
-            form.save()
+            user_profile = form.save()
+            lang = user_profile.preferred_language
+            activate(lang)
+
             from django.contrib import messages
-            messages.success(request, "Profile updated!")
-            return redirect("tracker:profile")
+            messages.success(request, _("Profile updated!"))
+
+            # Keep URL prefix and language cookie in sync with user's selection.
+            next_url = translate_url(request.path, lang) or request.path
+            if next_url == request.path:
+                full_path = request.get_full_path()
+                path_only, sep, query = full_path.partition("?")
+                segments = [s for s in path_only.strip("/").split("/") if s]
+                supported = {code for code, _name in settings.LANGUAGES}
+                if segments and segments[0] in supported:
+                    segments[0] = lang
+                    fallback_path = "/" + "/".join(segments) + "/"
+                else:
+                    fallback_path = f"/{lang}{path_only if path_only.startswith('/') else '/' + path_only}"
+                next_url = f"{fallback_path}?{query}" if sep else fallback_path
+            response = redirect(next_url)
+            response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang)
+            return response
     else:
         form = ProfileForm(instance=user_profile)
+
 
     logs = DailyLog.objects.filter(user=request.user).order_by("-date")
 

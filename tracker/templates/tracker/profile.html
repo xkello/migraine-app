@@ -1,15 +1,28 @@
 {% extends "tracker/base.html" %}
+{% load i18n weather_i18n %}
 
-{% block title %}Profile & Logs{% endblock %}
+{% block title %}{% trans "Profile & Logs" %}{% endblock %}
 
 {% block content %}
 <div class="card-glass mb-4">
-    <h2 class="h5 mb-3">Settings</h2>
-    <form method="post">
+    {% with selected_lang=form.preferred_language.value|default:user_profile.preferred_language %}
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">{% trans "Settings" %}</h2>
+        <div>
+            <a href="#" onclick="setLanguage('sk'); return false;" title="Slovenčina" data-lang-choice="sk" class="text-decoration-none me-2 d-inline-block{% if selected_lang == 'sk' %} lang-choice-active{% else %} lang-choice-inactive{% endif %}" style="font-size: 1.5rem; transition: 0.3s;">
+                <span class="fi fi-sk"></span>
+            </a>
+            <a href="#" onclick="setLanguage('en'); return false;" title="English" data-lang-choice="en" class="text-decoration-none d-inline-block{% if selected_lang == 'en' %} lang-choice-active{% else %} lang-choice-inactive{% endif %}" style="font-size: 1.5rem; transition: 0.3s;">
+                <span class="fi fi-gb"></span>
+            </a>
+        </div>
+    </div>
+    <form method="post" id="profile-form">
         {% csrf_token %}
+        {{ form.preferred_language }}
 
         <div class="profile-settings-row mb-3">
-            <label for="{{ form.city.id_for_label }}" class="form-label-small mb-0">City:</label>
+            <label for="{{ form.city.id_for_label }}" class="form-label-small mb-0">{% trans "City" %}:</label>
 
             <div class="profile-city-input">
                 {{ form.city }}
@@ -20,14 +33,15 @@
             <div class="form-check form-switch">
                 {{ form.show_menstruation }}
                 <label class="form-check-label form-label-small" for="{{ form.show_menstruation.id_for_label }}">
-                    Show Menstruation Tracking
+                    {% trans "Show Menstruation Tracking" %}
                 </label>
             </div>
         </div>
 
         <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-accent px-4">Update Settings</button>
+            <button type="submit" class="btn btn-accent px-4">{% trans "Update Settings" %}</button>
         </div>
+        <div class="small text-soft mt-2">{% trans "Language change is applied after you click Update Settings." %}</div>
 
         {% if form.city.errors %}
         <div class="w-100 mt-1 text-danger small">
@@ -35,9 +49,10 @@
         </div>
         {% endif %}
     </form>
+    {% endwith %}
 </div>
 
-<h2 class="h4 mb-3">History</h2>
+<h2 class="h4 mb-3">{% trans "History" %}</h2>
 
 {% for log in logs %}
 <div class="card-glass mb-3">
@@ -55,10 +70,10 @@
         </div>
 
         <div class="log-card-actions">
-            <a href="{% url 'tracker:edit_log' log.pk %}" class="btn-icon btn-icon--md btn-icon--accent" aria-label="Edit log">
+            <a href="{% url 'tracker:edit_log' log.pk %}" class="btn-icon btn-icon--md btn-icon--accent" aria-label="{% trans 'Edit log' %}">
                 <i class="bi bi-pencil-square"></i>
             </a>
-            <a href="{% url 'tracker:delete_log' log.pk %}" class="btn-icon btn-icon--md btn-icon--danger" aria-label="Delete log">
+            <a href="{% url 'tracker:delete_log' log.pk %}" class="btn-icon btn-icon--md btn-icon--danger" aria-label="{% trans 'Delete log' %}">
                 <i class="bi bi-trash"></i>
             </a>
         </div>
@@ -66,87 +81,132 @@
 
     <div class="log-metrics">
         <div class="log-metric">
-            <div class="log-metric-label">Sleep</div>
+            <div class="log-metric-label">{% trans "Sleep" %}</div>
             <div class="log-metric-value">{{ log.sleep_hours }}h</div>
         </div>
 
         <div class="log-metric">
-            <div class="log-metric-label">Activity</div>
+            <div class="log-metric-label">{% trans "Activity" %}</div>
             <div class="log-metric-value">{{ log.physical_activity_minutes }}m (lv {{ log.physical_activity_difficulty }})</div>
         </div>
 
         <div class="log-metric">
-            <div class="log-metric-label">Stress</div>
+            <div class="log-metric-label">{% trans "Stress" %}</div>
             <div class="log-metric-value">{{ log.stress_level }}/5</div>
         </div>
 
         <div class="log-metric">
-            <div class="log-metric-label">Meals</div>
+            <div class="log-metric-label">{% trans "Meals" %}</div>
             <div class="log-metric-value">{{ log.heavy_meals }}</div>
         </div>
 
         <div class="log-metric">
-            <div class="log-metric-label">Hydration</div>
+            <div class="log-metric-label">{% trans "Hydration" %}</div>
             <div class="log-metric-value">{{ log.hydration_liters }}l</div>
         </div>
 
         <div class="log-metric">
-            <div class="log-metric-label">Alcohol</div>
+            <div class="log-metric-label">{% trans "Alcohol" %}</div>
             <div class="log-metric-value">{{ log.alcohol_consumption }}/5</div>
         </div>
 
         {% if log.menstruation %}
         <div class="log-metric">
-            <div class="log-metric-label">Period</div>
+            <div class="log-metric-label">{% trans "Period" %}</div>
             <div class="log-metric-value text-accent"><i class="bi bi-droplet-fill"></i></div>
         </div>
         {% endif %}
 
         {% if log.had_migraine %}
         <div class="log-metric is-danger">
-            <div class="log-metric-label text-danger-emphasis">Int.</div>
+            <div class="log-metric-label text-danger-emphasis">{% trans "Int." %}</div>
             <div class="log-metric-value text-danger">{{ log.migraine_intensity }}</div>
         </div>
 
         <div class="log-metric is-danger">
-            <div class="log-metric-label text-danger-emphasis">Dur.</div>
+            <div class="log-metric-label text-danger-emphasis">{% trans "Dur." %}</div>
             <div class="log-metric-value text-danger">{{ log.migraine_duration_hours }}h</div>
-        </div>
-
-        <div class="log-metric">
-            <div class="log-metric-label">Medication</div>
-            <div class="log-metric-value log-metric-truncate">{{ log.meds_taken|default:"—" }}</div>
         </div>
         {% endif %}
 
         <div class="log-metric">
-            <div class="log-metric-label">Caffeine</div>
+            <div class="log-metric-label">{% trans "Caffeine" %}</div>
             <div class="log-metric-value">{{ log.caffeine_mg }}mg</div>
         </div>
     </div>
 
     {% if log.weather_temp_c is not None %}
-    <div class="mt-2">
-        <div class="log-weather">
-            <span><i class="bi bi-thermometer-half text-accent"></i> {{ log.weather_temp_c|floatformat:0 }}°</span>
-            <span><i class="bi bi-droplets text-accent"></i> {{ log.weather_humidity }}%</span>
-            <span><i class="bi bi-speedometer2 text-accent"></i> {{ log.weather_pressure_hpa }}</span>
-            <span class="log-weather-desc"><i class="bi bi-cloud-sun text-accent"></i> {{ log.weather_description }}</span>
-        </div>
+    <div class="log-weather mt-2">
+        <span class="log-weather-item log-weather-temp">
+            <i class="bi bi-thermometer-half text-accent"></i>
+            <span class="log-weather-value log-weather-value--compact">{{ log.weather_temp_c|floatformat:0 }}°</span>
+        </span>
+        <span class="log-weather-item log-weather-item--stack log-weather-humidity">
+            <span class="text-accent log-weather-label">{% trans "Humidity" %}:</span>
+            <span class="log-weather-value">{{ log.weather_humidity }}%</span>
+        </span>
+        <span class="log-weather-item log-weather-pressure">
+            <i class="bi bi-speedometer2 text-accent"></i>
+            <span class="log-weather-value log-weather-value--compact">{{ log.weather_pressure_hpa }}</span>
+        </span>
+        <span class="log-weather-item log-weather-desc log-weather-item--stack log-weather-forecast">
+            <i class="bi bi-cloud-sun text-accent"></i>
+            <span>{{ log.weather_description|weather_i18n }}</span>
+        </span>
+    </div>
+    {% endif %}
+
+    {% if log.meds_taken %}
+    <div class="log-detail-box mt-2">
+        <div class="log-detail-label">{% trans "Medication" %}</div>
+        <div class="log-detail-text">{{ log.meds_taken }}</div>
     </div>
     {% endif %}
 
     {% if log.notes %}
-    <div class="mt-2 p-2 bg-dark bg-opacity-50 rounded border-start border-accent border-2">
-        <div class="small text-light" style="font-size: 0.8rem;">{{ log.notes }}</div>
+    <div class="log-detail-box mt-2">
+        <div class="log-detail-label">{% trans "Additional Notes" %}</div>
+        <div class="log-detail-text">{{ log.notes }}</div>
     </div>
     {% endif %}
 </div>
 {% empty %}
 <div class="card-glass text-center p-5">
     <i class="bi bi-journal-x display-1 text-soft"></i>
-    <p class="mt-3">No logs yet. Start by adding one!</p>
-    <a href="{% url 'tracker:log' %}" class="btn btn-accent mt-2">Add Your First Log</a>
+    <p class="mt-3">{% trans "No logs yet. Start by adding one!" %}</p>
+    <a href="{% url 'tracker:log' %}" class="btn btn-accent mt-2">{% trans "Add Your First Log" %}</a>
 </div>
 {% endfor %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function setLanguage(lang) {
+    const langInput = document.querySelector('input[name="preferred_language"]');
+    if (langInput) {
+        langInput.value = lang;
+    }
+
+    document.querySelectorAll('[data-lang-choice]').forEach((el) => {
+        if (el.getAttribute('data-lang-choice') === lang) {
+            el.classList.add('lang-choice-active');
+            el.classList.remove('lang-choice-inactive');
+        } else {
+            el.classList.add('lang-choice-inactive');
+            el.classList.remove('lang-choice-active');
+        }
+    });
+}
+</script>
+<style>
+  .lang-choice-active {
+      opacity: 1;
+      filter: none;
+  }
+
+  .lang-choice-inactive {
+      opacity: 0.5;
+      filter: grayscale(100%);
+  }
+</style>
 {% endblock %}

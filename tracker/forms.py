@@ -2,6 +2,7 @@
 from django import forms
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 from .models import DailyLog, UserProfile
 from .services import openweather
 
@@ -24,7 +25,7 @@ class DailyLogForm(forms.ModelForm):
                 continue # Already handled
             existing_classes = field.widget.attrs.get("class", "")
             if field_name == "had_migraine" or field_name == "menstruation" or field_name == "show_menstruation":
-                field.widget.attrs["class"] = f"{existing_classes} form-check-input".strip()
+                field.widget.attrs["class"] = f"{existing_classes} form-check-input ms-0".strip()
                 if field_name == "had_migraine":
                     field.widget.attrs["data-toggle-migraine"] = "true"
             elif field_name == "notes":
@@ -48,7 +49,7 @@ class DailyLogForm(forms.ModelForm):
     def clean_date(self):
         d = self.cleaned_data.get("date")
         if d and d > timezone.localdate():
-            raise ValidationError("You cannot log a future date.")
+            raise ValidationError(_("You cannot log a future date."))
         return d
 
     def clean(self):
@@ -62,14 +63,14 @@ class DailyLogForm(forms.ModelForm):
             if self.instance and self.instance.pk:
                 qs = qs.exclude(pk=self.instance.pk)
             if qs.exists():
-                raise ValidationError("You already have a log for this date. Edit the existing one instead.")
+                raise ValidationError(_("You already have a log for this date. Edit the existing one instead."))
 
         # Migraine conditional requirements
         if had:
             if cleaned.get("migraine_intensity") is None:
-                self.add_error("migraine_intensity", "Required when 'Had migraine' is checked.")
+                self.add_error("migraine_intensity", _("Required when 'Had migraine' is checked."))
             if cleaned.get("migraine_duration_hours") is None:
-                self.add_error("migraine_duration_hours", "Required when 'Had migraine' is checked.")
+                self.add_error("migraine_duration_hours", _("Required when 'Had migraine' is checked."))
         else:
             cleaned["migraine_intensity"] = None
             cleaned["migraine_duration_hours"] = None
@@ -81,15 +82,16 @@ class DailyLogForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ["city", "show_menstruation"]
+        fields = ["city", "show_menstruation", "preferred_language"]
         widgets = {
             "city": forms.TextInput(attrs={
                 "class": "form-control log-input",
-                "placeholder": "Enter city name..."
+                "placeholder": _("Enter city name...")
             }),
             "show_menstruation": forms.CheckboxInput(attrs={
                 "class": "form-check-input"
-            })
+            }),
+            "preferred_language": forms.HiddenInput()
         }
 
     def clean_city(self):
@@ -99,5 +101,7 @@ class ProfileForm(forms.ModelForm):
                 # Validate city via geocoding
                 openweather.geocode(city)
             except Exception:
-                raise ValidationError(f"Could not validate city '{city}'. Please enter a valid city name that OpenWeather knows.")
+                raise ValidationError(
+                    _("Could not validate city '{city}'. Please enter a valid city name that OpenWeather knows.").format(city=city)
+                )
         return city

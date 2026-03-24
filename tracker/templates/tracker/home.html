@@ -1,27 +1,28 @@
 {% extends "tracker/base.html" %}
+{% load i18n %}
 
-{% block title %}Migraine Tracker{% endblock %}
+{% block title %}{% trans "Migraine Tracker" %}{% endblock %}
 
 {% block content %}
-  <h2 class="h4 mb-3">Welcome back, {{ user_name }}</h2>
+  <h2 class="h4 mb-3">{% blocktrans %}Welcome back, {{ user_name }}{% endblocktrans %}</h2>
 
     <div class="card-glass mb-4 p-3 border-start border-accent border-4">
     <div class="d-flex align-items-center gap-3">
       <div class="flex-grow-1">
         <p class="mb-1 text-soft small text-uppercase fw-bold" style="letter-spacing: 1px;">
-          Your Migraine Risk (Tomorrow)
+          {% trans "Your Migraine Risk (Tomorrow)" %}
         </p>
 
         {% if risk.available %}
           <div class="risk-row">
             <div class="risk-main">
-              <span class="risk-label">{{ risk.label }}</span>
+              <span class="risk-label">{% trans risk.label %}</span>
               <span class="risk-percent">{{ risk.percent }}%</span>
               <i class="bi {{ risk.icon_css }} risk-icon" aria-hidden="true"></i>
             </div>
 
             {% if risk.confidence %}
-              <span class="risk-confidence">{{ risk.confidence }}</span>
+              <span class="risk-confidence">{% trans risk.confidence %}</span>
             {% endif %}
           </div>
 
@@ -29,13 +30,13 @@
             <span class="risk-why-icon">
               <i class="bi bi-info-circle text-accent"></i>
             </span>
-            <span><strong>Why?</strong> {{ risk.summary }}</span>
+            <span><strong>{% trans "Why?" %}</strong> {% trans risk.summary %}</span>
           </div>
 
         {% else %}
           <div class="risk-row">
             <div class="risk-main">
-              <span class="risk-label">Not available yet</span>
+              <span class="risk-label">{% trans "Not available yet" %}</span>
             </div>
           </div>
 
@@ -43,7 +44,7 @@
             <span class="risk-why-icon">
               <i class="bi bi-info-circle text-accent"></i>
             </span>
-            <span>{{ risk.summary }}</span>
+            <span>{% trans risk.summary %}</span>
           </div>
         {% endif %}
 
@@ -54,19 +55,18 @@
   {% if not has_data %}
     <div class="card-glass mb-3">
       <p class="mb-0 text-soft">
-        You don't have any logs yet. Tap the <strong>+</strong> button in the bottom bar
-        to add your first day. Once you have a few entries, your graphs will appear here.
+        {% blocktrans %}You don't have any logs yet. Tap the <strong>+</strong> button in the bottom bar to add your first day. Once you have a few entries, your graphs will appear here.{% endblocktrans %}
       </p>
     </div>
   {% else %}
 
     <!-- HEALTH SECTION -->
-    <p class="mb-1 text-soft small">Your health data</p>
+    <p class="mb-1 text-soft small">{% trans "Your health data" %}</p>
 
     <!-- Sleep -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Sleep (hours)</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{% trans "Sleep (hours)" %}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="sleepChart" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="sleepChart" type="button">▶</button>
@@ -80,7 +80,7 @@
     <!-- Activity -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Physical activity (minutes)</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{% trans "Physical activity (minutes)" %}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="activityChart" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="activityChart" type="button">▶</button>
@@ -94,7 +94,7 @@
     <!-- Activity Difficulty -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Activity Difficulty (0-5)</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{% trans "Activity Difficulty (0-5)" %}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="activityDifficultyChart" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="activityDifficultyChart" type="button">▶</button>
@@ -108,7 +108,7 @@
     <!-- Stress -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Stress level (1 – 5)</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{% trans "Stress level (1 – 5)" %}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="stressChart" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="stressChart" type="button">▶</button>
@@ -122,7 +122,7 @@
     <!-- Caffeine -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Caffeine (mg)</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{% trans "Caffeine (mg)" %}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="caffeineChart" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="caffeineChart" type="button">▶</button>
@@ -136,7 +136,7 @@
     <!-- Heavy Meals -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Heavy Meals</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{% trans "Heavy Meals" %}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="heavyMealsChart" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="heavyMealsChart" type="button">▶</button>
@@ -150,7 +150,7 @@
     <!-- Hydration -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Hydration (liters)</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{% trans "Hydration (liters)" %}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="hydrationChart" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="hydrationChart" type="button">▶</button>
@@ -164,7 +164,7 @@
     <!-- Alcohol -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Alcohol Consumption (0-5)</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{% trans "Alcohol Consumption (0-5)" %}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="alcoholChart" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="alcoholChart" type="button">▶</button>
@@ -176,11 +176,11 @@
     </div>
 
     <!-- MIGRAINE SECTION -->
-    <p class="mb-1 text-soft small">Your migraine data</p>
+    <p class="mb-1 text-soft small">{% trans "Your migraine data" %}</p>
     <!-- MIGRAINE INTENSITY -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Intensity (0-10)</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{% trans "Intensity (0-10)" %}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="migraineIntensityChart" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="migraineIntensityChart" type="button">▶</button>
@@ -194,7 +194,7 @@
     <!-- MIGRAINE DURATION -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Duration (hours)</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{% trans "Duration (hours)" %}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="migraineDurationChart" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="migraineDurationChart" type="button">▶</button>
@@ -208,7 +208,7 @@
     <!-- MIGRAINE OCCURRENCES -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Occurrences (0/1)</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{% trans "Occurrences (0/1)" %}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-prev" data-chart="migraineOccurrenceChart" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent nav-next" data-chart="migraineOccurrenceChart" type="button">▶</button>
@@ -220,12 +220,12 @@
     </div>
 
     <!-- WEATHER SECTION -->
-    <p class="mb-1 text-soft small">Weather data</p>
+    <p class="mb-1 text-soft small">{% trans "Weather data" %}</p>
 
     <!-- Pressure -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Pressure (hPa)</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{{ weather_pressure_label }}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent weather-prev" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent weather-next" type="button">▶</button>
@@ -239,7 +239,7 @@
     <!-- Temperature -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Temperature (°C)</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{{ weather_temp_label }}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent weather-prev" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent weather-next" type="button">▶</button>
@@ -253,7 +253,7 @@
     <!-- Humidity -->
     <div class="card-glass chart-card">
       <div class="chart-header px-3 pt-2">
-        <span class="chart-title small fw-semibold-no-margin text-nowrap">Humidity (%)</span>
+        <span class="chart-title small fw-semibold-no-margin text-nowrap">{{ weather_humidity_label }}</span>
         <div class="chart-nav">
             <button class="btn-icon btn-icon--sm btn-icon--accent weather-prev" type="button">◀</button>
             <button class="btn-icon btn-icon--sm btn-icon--accent weather-next" type="button">▶</button>
@@ -295,17 +295,17 @@
 
   // series config
   window.series = {
-    sleepChart:    { labels: fullLabels, data: sleepData,    size: 6, start: Math.max(0, fullLabels.length - 6) },
-    activityChart: { labels: fullLabels, data: activityData, size: 6, start: Math.max(0, fullLabels.length - 6) },
-    stressChart:   { labels: fullLabels, data: stressData,   size: 6, start: Math.max(0, fullLabels.length - 6) },
-    caffeineChart: { labels: fullLabels, data: caffeineData, size: 6, start: Math.max(0, fullLabels.length - 6) },
-    activityDifficultyChart: { labels: fullLabels, data: activityDifficultyData, size: 6, start: Math.max(0, fullLabels.length - 6) },
-    heavyMealsChart: { labels: fullLabels, data: heavyMealsData, size: 6, start: Math.max(0, fullLabels.length - 6) },
-    hydrationChart: { labels: fullLabels, data: hydrationData, size: 6, start: Math.max(0, fullLabels.length - 6) },
-    alcoholChart: { labels: fullLabels, data: alcoholData, size: 6, start: Math.max(0, fullLabels.length - 6) },
-    migraineIntensityChart: { labels: fullLabels, data: migraineIntensityData, size: 6, start: Math.max(0, fullLabels.length - 6) },
-    migraineDurationChart:  { labels: fullLabels, data: migraineDurationData,  size: 6, start: Math.max(0, fullLabels.length - 6) },
-    migraineOccurrenceChart: { labels: fullLabels, data: hadMigraineFlags,      size: 6, start: Math.max(0, fullLabels.length - 6) }
+    sleepChart:    { labels: fullLabels, label: "{% trans "Sleep (hours)" %}", data: sleepData,    size: 6, start: Math.max(0, fullLabels.length - 6) },
+    activityChart: { labels: fullLabels, label: "{% trans "Physical activity (minutes)" %}", data: activityData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    stressChart:   { labels: fullLabels, label: "{% trans "Stress level (1 – 5)" %}", data: stressData,   size: 6, start: Math.max(0, fullLabels.length - 6) },
+    caffeineChart: { labels: fullLabels, label: "{% trans "Caffeine (mg)" %}", data: caffeineData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    activityDifficultyChart: { labels: fullLabels, label: "{% trans "Activity Difficulty (0-5)" %}", data: activityDifficultyData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    heavyMealsChart: { labels: fullLabels, label: "{% trans "Heavy Meals" %}", data: heavyMealsData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    hydrationChart: { labels: fullLabels, label: "{% trans "Hydration (liters)" %}", data: hydrationData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    alcoholChart: { labels: fullLabels, label: "{% trans "Alcohol Consumption (0-5)" %}", data: alcoholData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    migraineIntensityChart: { labels: fullLabels, label: "{% trans "Intensity (0-10)" %}", data: migraineIntensityData, size: 6, start: Math.max(0, fullLabels.length - 6) },
+    migraineDurationChart:  { labels: fullLabels, label: "{% trans "Duration (hours)" %}", data: migraineDurationData,  size: 6, start: Math.max(0, fullLabels.length - 6) },
+    migraineOccurrenceChart: { labels: fullLabels, label: "{% trans "Occurrences (0/1)" %}", data: hadMigraineFlags,      size: 6, start: Math.max(0, fullLabels.length - 6) }
   };
 
   const weatherLabels = weatherLabelsISO.map(fmtLabel);
@@ -350,22 +350,22 @@
         humidity: sliceWindow(weatherGroup.humidity, weatherGroup.start, weatherGroup.size)
     };
 
-    createWeatherLine("weatherPressureChart", "Pressure (hPa)", "#3282B8", w0.labels, w0.pressure, weatherGroup.pressure);
-    createWeatherLine("weatherTempChart", "Temperature (°C)", "#BBE1FA", w0.labels, w0.temp, weatherGroup.temp);
-    createWeatherLine("weatherHumidityChart", "Humidity (%)", "#0F4C75", w0.labels, w0.humidity, weatherGroup.humidity);
+    createWeatherLine("weatherPressureChart", "{{ weather_pressure_label|escapejs }}", "#3282B8", w0.labels, w0.pressure, weatherGroup.pressure);
+    createWeatherLine("weatherTempChart", "{{ weather_temp_label|escapejs }}", "#BBE1FA", w0.labels, w0.temp, weatherGroup.temp);
+    createWeatherLine("weatherHumidityChart", "{{ weather_humidity_label|escapejs }}", "#0F4C75", w0.labels, w0.humidity, weatherGroup.humidity);
 
     // Initialize Health/Migraine
-    createLineChart("sleepChart", "Sleep (hours)", "#3282B8", series.sleepChart);
-    createBarChart("activityChart", "Physical activity (minutes)", "#0F4C75", series.activityChart);
-    createLineChart("stressChart", "Stress (1–5)", "#BBE1FA", series.stressChart);
-    createBarChart("caffeineChart", "Caffeine (mg)", "#3282B8", series.caffeineChart);
-    createLineChart("activityDifficultyChart", "Difficulty (0-5)", "#BBE1FA", series.activityDifficultyChart);
-    createBarChart("heavyMealsChart", "Heavy Meals", "#0F4C75", series.heavyMealsChart);
-    createLineChart("hydrationChart", "Hydration (liters)", "#3282B8", series.hydrationChart);
-    createBarChart("alcoholChart", "Alcohol (0-5)", "#BBE1FA", series.alcoholChart);
-    createLineChart("migraineIntensityChart", "Intensity (0–10)", "#BBE1FA", series.migraineIntensityChart);
-    createLineChart("migraineDurationChart", "Duration (hours)", "#3282B8", series.migraineDurationChart);
-    createBarChart("migraineOccurrenceChart", "Had migraine (0/1)", "#0F4C75", series.migraineOccurrenceChart);
+    createLineChart("sleepChart", "{% trans "Sleep (hours)" %}", "#3282B8", series.sleepChart);
+    createBarChart("activityChart", "{% trans "Physical activity (minutes)" %}", "#0F4C75", series.activityChart);
+    createLineChart("stressChart", "{% trans "Stress level (1 – 5)" %}", "#BBE1FA", series.stressChart);
+    createBarChart("caffeineChart", "{% trans "Caffeine (mg)" %}", "#3282B8", series.caffeineChart);
+    createLineChart("activityDifficultyChart", "{% trans "Activity Difficulty (0-5)" %}", "#BBE1FA", series.activityDifficultyChart);
+    createBarChart("heavyMealsChart", "{% trans "Heavy Meals" %}", "#0F4C75", series.heavyMealsChart);
+    createLineChart("hydrationChart", "{% trans "Hydration (liters)" %}", "#3282B8", series.hydrationChart);
+    createBarChart("alcoholChart", "{% trans "Alcohol Consumption (0-5)" %}", "#BBE1FA", series.alcoholChart);
+    createLineChart("migraineIntensityChart", "{% trans "Intensity (0-10)" %}", "#BBE1FA", series.migraineIntensityChart);
+    createLineChart("migraineDurationChart", "{% trans "Duration (hours)" %}", "#3282B8", series.migraineDurationChart);
+    createBarChart("migraineOccurrenceChart", "{% trans "Occurrences (0/1)" %}", "#0F4C75", series.migraineOccurrenceChart);
   });
 </script>
 {% endblock %}

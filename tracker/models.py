@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
 
@@ -12,6 +13,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     city = models.CharField(max_length=100, blank=True)
     show_menstruation = models.BooleanField(default=False)
+    preferred_language = models.CharField(max_length=5, default="sk", choices=[("en", _("English")), ("sk", _("Slovenčina"))])
 
     def __str__(self):
         return f"Profile({self.user.username})"

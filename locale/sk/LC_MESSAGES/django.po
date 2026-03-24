@@ -1,0 +1,446 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-24 22:04+0000\n"
+"PO-Revision-Date: 2026-03-24 22:04+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: sk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+msgid "Migraine Tracker"
+msgstr "Sledovanie migrény"
+
+msgid "Home"
+msgstr "Domov"
+
+msgid "Log"
+msgstr "Záznam"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Profile & Logs"
+msgstr "Profil a záznamy"
+
+msgid "Settings"
+msgstr "Nastavenia"
+
+msgid "City"
+msgstr "Mesto"
+
+msgid "Show Menstruation Tracking"
+msgstr "Zobraziť sledovanie menštruácie"
+
+msgid "Update Settings"
+msgstr "Aktualizovať nastavenia"
+
+msgid "History"
+msgstr "História"
+
+msgid "Sleep"
+msgstr "Spánok"
+
+msgid "Activity"
+msgstr "Aktivita"
+
+msgid "Stress"
+msgstr "Stres"
+
+msgid "Meals"
+msgstr "Jedlá"
+
+msgid "Hydration"
+msgstr "Hydratácia"
+
+msgid "Alcohol"
+msgstr "Alkohol"
+
+msgid "Period"
+msgstr "Menštruácia"
+
+msgid "Int."
+msgstr "Int."
+
+msgid "Dur."
+msgstr "Trvanie"
+
+msgid "Medication"
+msgstr "Lieky"
+
+msgid "Caffeine"
+msgstr "Kofeín"
+
+msgid "No logs yet. Start by adding one!"
+msgstr "Zatiaľ žiadne záznamy. Začnite pridaním prvého!"
+
+msgid "Add Your First Log"
+msgstr "Pridajte svoj prvý záznam"
+
+msgid "Welcome back, {{ user_name }}"
+msgstr "Vitaj späť, {{ user_name }}"
+
+msgid "Welcome back, %(user_name)s"
+msgstr "Vitaj späť, %(user_name)s"
+
+msgid "Your Migraine Risk (Tomorrow)"
+msgstr "Vaše riziko migrény (zajtra)"
+
+msgid "Why?"
+msgstr "Prečo?"
+
+msgid "Not available yet"
+msgstr "Zatiaľ nie je k dispozícii"
+
+msgid "You don't have any logs yet. Tap the <strong>+</strong> button in the bottom bar to add your first day. Once you have a few entries, your graphs will appear here."
+msgstr "Zatiaľ nemáte žiadne záznamy. Klepnutím na tlačidlo <strong>+</strong> v spodnej lište pridajte svoj prvý deň. Keď budete mať niekoľko záznamov, zobrazia sa tu vaše grafy."
+
+msgid "Your health data"
+msgstr "Vaše zdravotné údaje"
+
+msgid "Sleep (hours)"
+msgstr "Spánok (hodiny)"
+
+msgid "Physical activity (minutes)"
+msgstr "Fyzická aktivita (minúty)"
+
+msgid "Activity Difficulty (0-5)"
+msgstr "Náročnosť aktivity (0-5)"
+
+msgid "Stress level (1 – 5)"
+msgstr "Úroveň stresu (1 – 5)"
+
+msgid "Caffeine (mg)"
+msgstr "Kofeín (mg)"
+
+msgid "Heavy Meals"
+msgstr "Ťažké jedlá"
+
+msgid "Hydration (liters)"
+msgstr "Hydratácia (litre)"
+
+msgid "Alcohol Consumption (0-5)"
+msgstr "Konzumácia alkoholu (0-5)"
+
+msgid "Your migraine data"
+msgstr "Vaše údaje o migréne"
+
+msgid "Intensity (0-10)"
+msgstr "Intenzita (0-10)"
+
+msgid "Duration (hours)"
+msgstr "Trvanie (hodiny)"
+
+msgid "Occurrences (0/1)"
+msgstr "Výskyty (0/1)"
+
+msgid "Had migraine (0/1)"
+msgstr "Mali ste migrénu (0/1)"
+
+msgid "Difficulty (0-5)"
+msgstr "Náročnosť (0-5)"
+
+msgid "Intensity (0–10)"
+msgstr "Intenzita (0–10)"
+
+msgid "Stress (1–5)"
+msgstr "Stres (1–5)"
+
+msgid "Weather data"
+msgstr "Údaje o počasí"
+
+msgid "Pressure (hPa)"
+msgstr "Tlak (hPa)"
+
+msgid "Temperature (°C)"
+msgstr "Teplota (°C)"
+
+msgid "Humidity (%)"
+msgstr "Vlhkosť (%)"
+
+msgid "Edit Log"
+msgstr "Upraviť záznam"
+
+msgid "Log your day"
+msgstr "Zaznamenajte svoj deň"
+
+msgid "Edit entry for {{ log_date }}"
+msgstr "Upraviť záznam pre {{ log_date }}"
+
+msgid "Date of Log"
+msgstr "Dátum záznamu"
+
+msgid "Which day are you reporting for?"
+msgstr "Pre ktorý deň podávate správu?"
+
+msgid "Physical activity (min)"
+msgstr "Fyzická aktivita (min)"
+
+msgid "Activity Difficulty (0–5)"
+msgstr "Náročnosť aktivity (0–5)"
+
+msgid "Activities where you strain your neck more, tend to be worse for your headache."
+msgstr "Aktivity, pri ktorých viac namáhate krk, bývajú pri bolestiach hlavy horšie."
+
+msgid "Stress lv (1–5)"
+msgstr "Úroveň stresu (1–5)"
+
+msgid "1 = low stress, 5 = very stressful day"
+msgstr "1 = nízky stres, 5 = veľmi stresujúci deň"
+
+msgid "Espresso ~65mg,"
+msgstr "Espresso ~65mg,"
+
+msgid "Black tea ~55mg,"
+msgstr "Čierny čaj ~55mg,"
+
+msgid "Green tea ~30mg,"
+msgstr "Zelený čaj ~30mg,"
+
+msgid "Energy drinks vary for each drink."
+msgstr "Energetické nápoje sa líšia podľa druhu."
+
+msgid "Heavy meals"
+msgstr "Ťažké jedlá"
+
+msgid "Number of heavy, high-calorie meals for this date."
+msgstr "Počet ťažkých, vysokokalorických jedál v tento deň."
+
+msgid "Hydration (l)"
+msgstr "Hydratácia (l)"
+
+msgid "Alcohol doesn't count :)"
+msgstr "Alkohol sa nepočíta :)"
+
+msgid "Alcohol (0–5)"
+msgstr "Alkohol (0–5)"
+
+msgid "How much you drank. Please note that some types of alcohol may be worse for you in your experience and therefore may have a higher score."
+msgstr "Koľko ste vypili. Upozorňujeme, že niektoré druhy alkoholu môžu byť podľa vašich skúseností pre vás horšie, a preto môžu mať vyššie skóre."
+
+msgid "Menstruation cycle"
+msgstr "Menštruačný cyklus"
+
+msgid "Did you have a migraine?"
+msgstr "Mali ste migrénu?"
+
+msgid "Intensity (0–10)"
+msgstr "Intenzita (0–10)"
+
+msgid "Medication taken"
+msgstr "Užité lieky"
+
+msgid "Upper/lower case doesn't matter here."
+msgstr "Na veľkosti písmen tu nezáleží."
+
+msgid "Additional Notes"
+msgstr "Ďalšie poznámky"
+
+msgid "Notes for you. Anything that you did during a day that might have helped you if you had migraine. For example, I had a headache, and I took a nap, or I went for a walk. Or on the other hand, things that might have worsened your headache or caused it."
+msgstr "Poznámky pre vás. Čokoľvek, čo ste počas dňa urobili a čo by vám mohlo pomôcť, ak ste mali migrénu. Napríklad: bolela ma hlava a zdriemol som si, alebo som išiel na prechádzku. Alebo naopak veci, ktoré mohli vašu bolesť hlavy zhoršiť alebo ju vyvolať."
+
+msgid "Update Log"
+msgstr "Aktualizovať záznam"
+
+msgid "Save Log"
+msgstr "Uložiť záznam"
+
+msgid "Delete entry"
+msgstr "Vymazať záznam"
+
+msgid "Weather data will be automatically synced based on your city."
+msgstr "Údaje o počasí sa automaticky zosynchronizujú na základe vášho mesta."
+
+msgid "English"
+msgstr "Angličtina"
+
+msgid "Slovenčina"
+msgstr "Slovenčina"
+
+msgid "Low"
+msgstr "Nízke"
+
+msgid "Medium"
+msgstr "Stredné"
+
+msgid "High"
+msgstr "Vysoké"
+
+msgid "Migraine yesterday"
+msgstr "Migréna včera"
+
+msgid "Pressure"
+msgstr "Tlak"
+
+msgid "Pressure change"
+msgstr "Zmena tlaku"
+
+msgid "Temperature"
+msgstr "Teplota"
+
+msgid "Temperature change"
+msgstr "Zmena teploty"
+
+msgid "Humidity"
+msgstr "Vlhkosť"
+
+msgid "Humidity change"
+msgstr "Zmena vlhkosti"
+
+msgid "Month ({month})"
+msgstr "Mesiac ({month})"
+
+msgid "Weekday ({weekday})"
+msgstr "Deň v týždni ({weekday})"
+
+msgid "(yesterday)"
+msgstr "(včera)"
+
+msgid "(avg last {w} days)"
+msgstr "(priemer za posledných {w} dní)"
+
+msgid "Migraine count (last {w} days)"
+msgstr "Počet migrén (posledných {w} dní)"
+
+msgid "Main factors increasing risk: {up_txt}."
+msgstr "Hlavné faktory zvyšujúce riziko: {up_txt}."
+
+msgid "Main factors decreasing risk: {down_txt}."
+msgstr "Hlavné faktory znižujúce riziko: {down_txt}."
+
+msgid "Not enough signals yet."
+msgstr "Zatiaľ nie je dostatok signálov."
+
+msgid "Prediction unavailable."
+msgstr "Predpoveď nie je k dispozícii."
+
+msgid "Add a few logs to get predictions."
+msgstr "Pridajte niekoľko záznamov, aby ste získali predpovede."
+
+msgid "Low confidence (limited history)"
+msgstr "Nízka dôvera (obmedzená história)"
+
+msgid "Medium confidence"
+msgstr "Stredná dôvera"
+
+msgid "High confidence"
+msgstr "Vysoká dôvera"
+
+msgid "Activity difficulty"
+msgstr "Náročnosť aktivity"
+
+msgid "Menstruation"
+msgstr "Menštruácia"
+
+msgid "You cannot log a future date."
+msgstr "Nemôžete zaznamenať budúci dátum."
+
+msgid "Weather data was unavailable for this date."
+msgstr "Údaje o počasí pre tento dátum neboli k dispozícii."
+
+msgid "Log updated successfully!"
+msgstr "Záznam bol úspešne aktualizovaný!"
+
+msgid "Changes saved!"
+msgstr "Zmeny boli uložené!"
+
+msgid "Profile updated!"
+msgstr "Profil bol aktualizovaný!"
+
+msgid "You already have a log for this date. Edit the existing one instead."
+msgstr "Pre tento dátum už máte záznam. Namiesto toho upravte existujúci."
+
+msgid "Required when 'Had migraine' is checked."
+msgstr "Povinné, keď je zaškrtnuté 'Mali ste migrénu'."
+
+msgid "Enter city name..."
+msgstr "Zadajte názov mesta..."
+
+msgid "Could not validate city '{city}'. Please enter a valid city name that OpenWeather knows."
+msgstr "Nepodarilo sa overiť mesto '{city}'. Zadajte platný názov mesta, ktorý OpenWeather pozná."
+
+msgid "Edit log"
+msgstr "Upraviť záznam"
+
+msgid "Delete log"
+msgstr "Vymazať záznam"
+
+msgid "Delete Log"
+msgstr "Vymazať záznam"
+
+msgid "Confirm Deletion"
+msgstr "Potvrdiť vymazanie"
+
+msgid "Are you sure you want to delete the log for <strong>{log_date}</strong>?"
+msgstr "Naozaj chcete vymazať záznam pre <strong>{log_date}</strong>?"
+
+msgid "Yes, delete it"
+msgstr "Áno, vymazať"
+
+msgid "Cancel"
+msgstr "Zrušiť"
+
+msgid "Language change is applied after you click Update Settings."
+msgstr "Zmena jazyka sa použije až po kliknutí na Aktualizovať nastavenia."
+
+msgid "friend"
+msgstr "kamarát"
+
+msgid "clear sky"
+msgstr "jasná obloha"
+
+msgid "few clouds"
+msgstr "malá oblačnosť"
+
+msgid "scattered clouds"
+msgstr "roztrúsená oblačnosť"
+
+msgid "broken clouds"
+msgstr "premenlivá oblačnosť"
+
+msgid "overcast clouds"
+msgstr "zamračené"
+
+msgid "mist"
+msgstr "opar"
+
+msgid "fog"
+msgstr "hmla"
+
+msgid "haze"
+msgstr "zákal"
+
+msgid "drizzle"
+msgstr "mrholenie"
+
+msgid "light rain"
+msgstr "slabý dážď"
+
+msgid "moderate rain"
+msgstr "mierny dážď"
+
+msgid "heavy intensity rain"
+msgstr "silný dážď"
+
+msgid "rain"
+msgstr "dážď"
+
+msgid "light snow"
+msgstr "slabé sneženie"
+
+msgid "snow"
+msgstr "sneženie"
+
+msgid "thunderstorm"
+msgstr "búrka"
+
+msgid "humidity"
+msgstr "vlhkosť"
+
+msgid "humidity (%)"
+msgstr "vlhkosť (%)"
+

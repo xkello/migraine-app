@@ -1,17 +1,18 @@
 {% extends "tracker/base.html" %}
+{% load i18n %}
 
-{% block title %}Delete Log{% endblock %}
+{% block title %}{% trans "Delete Log" %}{% endblock %}
 
 {% block content %}
 <div class="card-glass mt-4">
-    <h2 class="h4 mb-3">Confirm Deletion</h2>
-    <p>Are you sure you want to delete the log for <strong>{{ log.date }}</strong>?</p>
-    
+    <h2 class="h4 mb-3">{% trans "Confirm Deletion" %}</h2>
+    <p>{% blocktrans with log_date=log.date %}Are you sure you want to delete the log for <strong>{{ log_date }}</strong>?{% endblocktrans %}</p>
+
     <form method="post">
         {% csrf_token %}
         <div class="d-grid gap-2 mt-4">
-            <button type="submit" class="btn btn-danger">Yes, delete it</button>
-            <a href="{% url 'tracker:home' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-danger">{% trans "Yes, delete it" %}</button>
+            <a href="{% url 'tracker:home' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
         </div>
     </form>
 </div>
