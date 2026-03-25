@@ -27,18 +27,11 @@ def root_redirect(request):
     lang = lang_cookie if lang_cookie in supported else django_settings.LANGUAGE_CODE
     return redirect(f"/{lang}/")
 
-def legacy_redirect(request):
-    lang_cookie = request.COOKIES.get(django_settings.LANGUAGE_COOKIE_NAME, "")
-    supported = {code for code, _ in django_settings.LANGUAGES}
-    lang = lang_cookie if lang_cookie in supported else django_settings.LANGUAGE_CODE
-    return redirect(f"/{lang}/")
 
 urlpatterns = [
     path("", root_redirect, name="root_redirect"),
     path("i18n/", include("django.conf.urls.i18n")),
     path("admin/", admin.site.urls),
-    path("log/", legacy_redirect, name="legacy_log_redirect"),
-    path("profile/", legacy_redirect, name="legacy_profile_redirect"),
 ]
 
 urlpatterns += i18n_patterns(
