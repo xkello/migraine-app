@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth.views import LogoutView
 from . import views
 
 app_name = "tracker"
@@ -9,4 +10,5 @@ urlpatterns = [
     path("log/<int:pk>/edit/", views.edit_log, name="edit_log"),
     path("log/<int:pk>/delete/", views.delete_log, name="delete_log"),
     path("profile/", views.profile, name="profile"),
+    path("logout/", LogoutView.as_view(), name="logout"),
 ]

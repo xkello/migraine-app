@@ -38,9 +38,6 @@
             </div>
         </div>
 
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-accent px-4">{% trans "Update Settings" %}</button>
-        </div>
         <div class="small text-soft mt-2">{% trans "Language change is applied after you click Update Settings." %}</div>
 
         {% if form.city.errors %}
@@ -49,6 +46,14 @@
         </div>
         {% endif %}
     </form>
+
+    <div class="profile-actions mt-3">
+        <button type="submit" form="profile-form" class="btn btn-accent px-4 profile-actions-btn">{% trans "Update Settings" %}</button>
+        <form method="post" action="{% url 'tracker:logout' %}" id="logout-form" class="m-0 profile-actions-logout-form">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger px-4 profile-actions-btn" onclick="return confirmLogout();">{% trans "Logout" %}</button>
+        </form>
+    </div>
     {% endwith %}
 </div>
 
@@ -196,6 +201,10 @@ function setLanguage(lang) {
             el.classList.remove('lang-choice-active');
         }
     });
+}
+
+function confirmLogout() {
+    return window.confirm("{% trans 'Are you sure you want to log out?' %}");
 }
 </script>
 <style>

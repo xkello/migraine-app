@@ -444,3 +444,9 @@ msgstr "vlhkosť"
 msgid "humidity (%)"
 msgstr "vlhkosť (%)"
 
+msgid "Logout"
+msgstr "Odhlásiť sa"
+
+msgid "Are you sure you want to log out?"
+msgstr "Naozaj sa chcete odhlásiť?"
+

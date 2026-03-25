@@ -46,6 +46,34 @@ body {
     width: 100%;
 }
 
+.profile-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    align-items: stretch;
+    grid-auto-rows: 1fr;
+}
+
+.profile-actions-btn {
+    width: 100%;
+    height: 100%;
+    min-height: 3.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.profile-actions-logout-form {
+    width: 100%;
+    display: flex;
+}
+
+.profile-actions-logout-form .profile-actions-btn {
+    flex: 1;
+}
+
 /* Log card header */
 .log-card-header {
     display: flex;
