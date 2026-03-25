@@ -16,5 +16,11 @@ class DailyLogAdmin(admin.ModelAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ("user", "city")
+    list_display = (
+        "user",
+        "city",
+        "missed_days_count",
+        "missed_days_last_incremented_on",
+    )
+    list_filter = ("missed_days_last_incremented_on",)
     search_fields = ("user__username", "city")

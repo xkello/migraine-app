@@ -18,6 +18,8 @@ class UserProfile(models.Model):
         default="sk",
         choices=[("en-us", _("English")), ("sk", _("Slovenčina"))],
     )
+    missed_days_count = models.PositiveIntegerField(default=0)
+    missed_days_last_incremented_on = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"Profile({self.user.username})"
