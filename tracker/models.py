@@ -13,7 +13,11 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     city = models.CharField(max_length=100, blank=True)
     show_menstruation = models.BooleanField(default=False)
-    preferred_language = models.CharField(max_length=5, default="sk", choices=[("en", _("English")), ("sk", _("Slovenčina"))])
+    preferred_language = models.CharField(
+        max_length=5,
+        default="sk",
+        choices=[("en-us", _("English")), ("sk", _("Slovenčina"))],
+    )
 
     def __str__(self):
         return f"Profile({self.user.username})"

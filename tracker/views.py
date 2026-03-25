@@ -413,6 +413,10 @@ def delete_log(request, pk):
 @login_required
 def profile(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    if user_profile.preferred_language == "en":
+        user_profile.preferred_language = "en-us"
+        user_profile.save(update_fields=["preferred_language"])
+
     if not user_profile.city:
         user_profile.city = "Bratislava"
         user_profile.save()
