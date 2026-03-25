@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.utils.translation import activate, gettext as _
 from django.conf import settings
 from django.core.cache import cache
+from django.db import transaction, IntegrityError
 
 from .forms import DailyLogForm, ProfileForm
 from .models import UserProfile, DailyLog
@@ -411,28 +412,47 @@ def delete_log(request, pk):
 
 @login_required
 def profile(request):
-    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    # Safely get-or-create the profile, handling a race condition where two
+    # concurrent requests could both attempt to INSERT and one gets IntegrityError.
+    try:
+        with transaction.atomic():
+            user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    except IntegrityError:
+        user_profile = UserProfile.objects.get(user=request.user)
+
+    # Normalise legacy / missing values in a single save to avoid multiple writes.
+    update_fields = []
     if user_profile.preferred_language == "en":
         user_profile.preferred_language = "en-us"
-        user_profile.save(update_fields=["preferred_language"])
-
+        update_fields.append("preferred_language")
     if not user_profile.city:
         user_profile.city = "Bratislava"
-        user_profile.save()
+        update_fields.append("city")
+    if update_fields:
+        user_profile.save(update_fields=update_fields)
 
     if request.method == "POST":
         form = ProfileForm(request.POST, instance=user_profile)
         if form.is_valid():
-            user_profile = form.save()
+            # Lock the profile row for the duration of the save so that rapid
+            # back-to-back submissions cannot overwrite each other mid-flight.
+            with transaction.atomic():
+                user_profile = (
+                    UserProfile.objects.select_for_update().get(pk=user_profile.pk)
+                )
+                form = ProfileForm(request.POST, instance=user_profile)
+                # Re-run is_valid() on the locked instance; geocode result is
+                # already cached so this is essentially free.
+                if form.is_valid():
+                    user_profile = form.save()
+
             lang = user_profile.preferred_language
             activate(lang)
 
             from django.contrib import messages
             messages.success(request, _("Profile updated!"))
 
-            # After activate(lang), reverse() uses the new language prefix automatically.
             from django.urls import reverse
-            activate(lang)
             response = redirect(reverse("tracker:profile"))
             response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang)
             return response
