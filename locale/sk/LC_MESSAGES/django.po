@@ -237,8 +237,8 @@ msgstr "Užité lieky"
 msgid "Upper/lower case doesn't matter here."
 msgstr "Na veľkosti písmen tu nezáleží."
 
-msgid "Additional Notes"
-msgstr "Ďalšie poznámky"
+msgid "Additional Notes - Optional"
+msgstr "Ďalšie poznámky - Volitelné"
 
 msgid "Notes for you. Anything that you did during a day that might have helped you if you had migraine. For example, I had a headache, and I took a nap, or I went for a walk. Or on the other hand, things that might have worsened your headache or caused it."
 msgstr "Poznámky pre vás. Čokoľvek, čo ste počas dňa urobili a čo by vám mohlo pomôcť, ak ste mali migrénu. Napríklad: bolela ma hlava a zdriemol som si, alebo som išiel na prechádzku. Alebo naopak veci, ktoré mohli vašu bolesť hlavy zhoršiť alebo ju vyvolať."
