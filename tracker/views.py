@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.utils.translation import activate, gettext as _
-from django.urls import translate_url
 from django.conf import settings
 from django.core.cache import cache
 
@@ -431,20 +430,10 @@ def profile(request):
             from django.contrib import messages
             messages.success(request, _("Profile updated!"))
 
-            # Keep URL prefix and language cookie in sync with user's selection.
-            next_url = translate_url(request.path, lang) or request.path
-            if next_url == request.path:
-                full_path = request.get_full_path()
-                path_only, sep, query = full_path.partition("?")
-                segments = [s for s in path_only.strip("/").split("/") if s]
-                supported = {code for code, _name in settings.LANGUAGES}
-                if segments and segments[0] in supported:
-                    segments[0] = lang
-                    fallback_path = "/" + "/".join(segments) + "/"
-                else:
-                    fallback_path = f"/{lang}{path_only if path_only.startswith('/') else '/' + path_only}"
-                next_url = f"{fallback_path}?{query}" if sep else fallback_path
-            response = redirect(next_url)
+            # After activate(lang), reverse() uses the new language prefix automatically.
+            from django.urls import reverse
+            activate(lang)
+            response = redirect(reverse("tracker:profile"))
             response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang)
             return response
     else:

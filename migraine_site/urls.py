@@ -18,14 +18,20 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
 from django.shortcuts import redirect
+from django.conf import settings as django_settings
 
 
 def root_redirect(request):
-    # Force bare domain/root to default Slovak entry point.
-    return redirect("/sk/")
+    lang_cookie = request.COOKIES.get(django_settings.LANGUAGE_COOKIE_NAME, "")
+    supported = {code for code, _ in django_settings.LANGUAGES}
+    lang = lang_cookie if lang_cookie in supported else django_settings.LANGUAGE_CODE
+    return redirect(f"/{lang}/")
 
 def legacy_redirect(request):
-    return redirect("/sk/")
+    lang_cookie = request.COOKIES.get(django_settings.LANGUAGE_COOKIE_NAME, "")
+    supported = {code for code, _ in django_settings.LANGUAGES}
+    lang = lang_cookie if lang_cookie in supported else django_settings.LANGUAGE_CODE
+    return redirect(f"/{lang}/")
 
 urlpatterns = [
     path("", root_redirect, name="root_redirect"),
