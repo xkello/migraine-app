@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import joblib
 from django.conf import settings
@@ -31,7 +30,10 @@ class ModelPaths:
 def get_model_paths() -> ModelPaths:
     base = getattr(settings, "ML_MODELS_DIR", None)
     if base is None:
-        raise RuntimeError("ML_MODELS_DIR is not set in settings.py")
+        base_dir = getattr(settings, "BASE_DIR", None)
+        if base_dir is None:
+            raise RuntimeError("Neither ML_MODELS_DIR nor BASE_DIR is set in Django settings")
+        base = Path(base_dir) / "models"
     return ModelPaths(base=Path(base))
 
 
