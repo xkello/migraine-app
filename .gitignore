@@ -25,3 +25,5 @@ migraine_site/settings.py
 # SQLite (local dev DB)
 db.sqlite3
 
+/scripts/generate_data.py
+/migraine_db.sql

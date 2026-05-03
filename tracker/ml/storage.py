@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -12,6 +13,27 @@ from django.conf import settings
 class ModelPaths:
     base: Path
 
+    # ------------------------------------------------------------------ #
+    # Random Forest (production model)
+    # ------------------------------------------------------------------ #
+    @property
+    def random_forest(self) -> Path:
+        return self.base / "random_forest" / "latest.joblib"
+
+    @property
+    def random_forest_metadata(self) -> Path:
+        return self.base / "random_forest" / "metadata.json"
+
+    @property
+    def random_forest_feature_importance(self) -> Path:
+        return self.base / "random_forest" / "feature_importance.json"
+
+    def random_forest_archive(self, timestamp: str) -> Path:
+        return self.base / "archive" / f"random_forest_{timestamp}.joblib"
+
+    # ------------------------------------------------------------------ #
+    # Legacy logistic regression paths (kept for rollback)
+    # ------------------------------------------------------------------ #
     @property
     def global_occurrence(self) -> Path:
         return self.base / "global" / "occurrence" / "latest.joblib"
@@ -44,6 +66,12 @@ def save_model(obj: Any, path: Path) -> None:
 
 def load_model(path: Path) -> Any:
     return joblib.load(path)
+
+
+def save_json(obj: Any, path: Path) -> None:
+    get_model_paths().ensure_parent(path)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(obj, f, indent=2, default=str)
 
 
 def model_exists(path: Path) -> bool:

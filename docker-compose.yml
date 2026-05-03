@@ -1,0 +1,78 @@
+# docker-compose.yml — local development
+#
+# Quick start:
+#   1. Copy .env.example to .env and fill in your OpenWeatherMap API key.
+#   2. docker compose up --build
+#   3. Open http://localhost:8000
+#
+# First run only (create an admin account):
+#   docker compose exec web python manage.py createsuperuser
+#
+# Train the ML model once you have enough logs (≥ 100):
+#   docker compose exec web python scripts/train_global_model.py
+
+services:
+
+  # ── PostgreSQL database ──────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${DB_NAME:-migraine_db}
+      POSTGRES_USER:     ${DB_USER:-migraine_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-migraine_local_pw}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"   # expose so you can connect with a local DB client
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-migraine_user} -d ${DB_NAME:-migraine_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Django application ───────────────────────────────────────────────────
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: migraine_site.settings_docker
+
+      # Database (must match the db service above)
+      DB_HOST:     db
+      DB_PORT:     "5432"
+      DB_NAME:     ${DB_NAME:-migraine_db}
+      DB_USER:     ${DB_USER:-migraine_user}
+      DB_PASSWORD: ${DB_PASSWORD:-migraine_local_pw}
+
+      # Django
+      SECRET_KEY:            ${SECRET_KEY:-django-insecure-local-dev-key-change-in-production}
+      DEBUG:                 ${DEBUG:-True}
+      DJANGO_ALLOWED_HOSTS:  ${DJANGO_ALLOWED_HOSTS:-}
+
+      # Optional: auto-create admin on first boot
+      # DJANGO_SUPERUSER_USERNAME: admin
+      # DJANGO_SUPERUSER_PASSWORD: admin
+      # DJANGO_SUPERUSER_EMAIL:    admin@example.com
+
+      # OpenWeatherMap
+      WEATHER_API_KEY: ${WEATHER_API_KEY:-your_api_key_here}
+
+    volumes:
+      # Bind-mount so that:
+      #   - trained ML model files survive container restarts
+      #   - source code changes are reflected without rebuilding (dev only)
+      - .:/app
+      # Named volume for static files (populated by collectstatic in entrypoint)
+      - static_files:/app/staticfiles
+
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data:
+  static_files:
+

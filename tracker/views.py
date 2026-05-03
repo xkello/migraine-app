@@ -66,6 +66,9 @@ def home(request):
             "physical_activity_minutes": _("Physical activity"),
             "physical_activity_difficulty": _("Activity difficulty"),
             "menstruation": _("Menstruation"),
+            "menstruation_yes": _("Menstruation"),
+            "weekend": _("Weekend"),
+            "weekend_yes": _("Weekend"),
             "had_migraine_lag1": _("Migraine yesterday"),
             "weather_pressure_hpa": _("Pressure"),
             "weather_pressure_hpa_delta1": _("Pressure change"),
@@ -73,12 +76,18 @@ def home(request):
             "weather_temp_c_delta1": _("Temperature change"),
             "weather_humidity": _("Humidity"),
             "weather_humidity_delta1": _("Humidity change"),
+            "weather_wind_speed": _("Wind speed"),
+            "weather_cloudiness": _("Cloudiness"),
         }
-        # Handle one-hot features like month_12 or weekday_3
+        # Handle one-hot features like month_Jan or weekday_Mon (RF) and legacy month_1 / weekday_0
         if feat.startswith("month_"):
             return _("Month ({month})").format(month=feat.split('_', 1)[1])
         if feat.startswith("weekday_"):
             return _("Weekday ({weekday})").format(weekday=feat.split('_', 1)[1])
+        # Handle one-hot weather description e.g. weather_description_clear sky
+        if feat.startswith("weather_description_"):
+            desc = feat[len("weather_description_"):].replace("_", " ")
+            return _("Weather: {desc}").format(desc=desc)
         # Handle lag/rolling generic patterns
         if "_lag1" in feat:
             base = feat.replace("_lag1", "")

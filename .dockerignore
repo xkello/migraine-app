@@ -1,0 +1,53 @@
+# .dockerignore — files excluded from the Docker build context
+
+# Python runtime artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Local database (Docker uses PostgreSQL)
+db.sqlite3
+*.sqlite3
+
+# Git
+.git/
+.gitignore
+
+# IDE and OS files
+.idea/
+.vscode/
+*.DS_Store
+Thumbs.db
+
+# Local secrets / env overrides
+.env
+.env.*
+!.env.example
+
+# Already covered by Docker volumes (no need to bake into image)
+staticfiles/
+django_cache/
+
+# Generated/analysis artefacts not needed in the image
+DS.R
+generated_dataset.csv
+generated_past_inserts.sql
+generated_profiles.csv
+generated_users.csv
+
+# Logs
+*.log
+logs/
+
+# Test and CI artefacts
+.coverage
+htmlcov/
+.pytest_cache/
+
