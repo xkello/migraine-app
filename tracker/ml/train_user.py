@@ -1,4 +1,9 @@
 from __future__ import annotations
+"""Legacy user-specific occurrence model training utilities.
+
+These routines are retained for compatibility and experiments; production
+prediction currently uses the global Random Forest model.
+"""
 
 from typing import Dict, Any, Optional
 
@@ -15,12 +20,22 @@ from .storage import get_model_paths, save_model
 
 
 def should_train_user_model(y_occ, cfg: MLConfig) -> bool:
+    """Return True when a user has enough history and positive samples."""
     n = len(y_occ)
     positives = int(y_occ.sum())
     return (n >= cfg.USER_MIN_DAYS) and (positives >= cfg.USER_MIN_POSITIVES)
 
 
 def train_user_occurrence(user_id: int, cfg: MLConfig | None = None) -> Dict[str, Any]:
+    """Train one user-specific occurrence model using chronological split.
+
+    Args:
+        user_id: Target user id.
+        cfg: Optional MLConfig override.
+
+    Returns:
+        Dict[str, Any]: Status, metrics, and saved artifact path.
+    """
     cfg = cfg or MLConfig()
     data = build_dataset(user_id=user_id, cfg=cfg)
     if data.X.empty:
@@ -80,6 +95,7 @@ def train_user_occurrence(user_id: int, cfg: MLConfig | None = None) -> Dict[str
 
 
 def train_all_users(cfg: MLConfig | None = None) -> Dict[str, Any]:
+    """Iterate all users and attempt user-model training for each."""
     cfg = cfg or MLConfig()
     User = get_user_model()
     results = {"ok": True, "users": []}

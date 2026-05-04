@@ -1,8 +1,19 @@
+"""Central configuration for migraine ML training and inference.
+
+Values in this module define feature-engineering behavior, model defaults,
+training guards, and the runtime classification threshold.
+"""
+
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class MLConfig:
+    """Immutable configuration object used across ML modules.
+
+    The same values are shared by dataset construction, model training,
+    and request-time prediction to keep behavior consistent.
+    """
     # Predict migraine for the NEXT day using today's log
     LABEL_SHIFT_DAYS: int = 1
 

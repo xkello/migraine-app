@@ -1,4 +1,9 @@
 from __future__ import annotations
+"""Feature engineering for migraine occurrence modeling.
+
+This module reads DailyLog records, derives temporal/rolling predictors, and
+produces supervised datasets used by both training and inference flows.
+"""
 
 from dataclasses import dataclass
 from typing import Optional, List
@@ -50,6 +55,16 @@ _MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 
 @dataclass
 class BuiltDataset:
+    """Container returned by `build_dataset`.
+
+    Attributes:
+        X: Full feature matrix for occurrence modeling.
+        y_occ: Binary target (next-day migraine occurrence).
+        X_migraine_days: Feature matrix filtered to positive target rows.
+        y_intensity: Next-day migraine intensity target for severity model.
+        y_duration: Next-day migraine duration target for severity model.
+        feature_columns: Ordered raw feature columns before preprocessing.
+    """
     X: pd.DataFrame
     y_occ: pd.Series
     # for v2
@@ -60,6 +75,14 @@ class BuiltDataset:
 
 
 def _query_logs(user_id: Optional[int] = None) -> pd.DataFrame:
+    """Load raw DailyLog rows and add date-derived categorical features.
+
+    Args:
+        user_id: Optional user id filter. If omitted, all users are included.
+
+    Returns:
+        DataFrame sorted by `user_id` and `date`, ready for feature expansion.
+    """
     qs = DailyLog.objects.all().values(
         "user_id",
         "date",
@@ -93,6 +116,11 @@ def _query_logs(user_id: Optional[int] = None) -> pd.DataFrame:
 
 
 def _add_group_lags_and_rolls(df: pd.DataFrame, cfg: MLConfig) -> pd.DataFrame:
+    """Add lag, delta, and rolling features grouped by user.
+
+    Rolling features use `shift(1)` before aggregation to avoid leakage from
+    the current day into predictors for the current row.
+    """
     g = df.groupby("user_id", sort=False)
 
     # Lag migraine + lag of key numeric predictors
@@ -140,6 +168,15 @@ def _add_group_lags_and_rolls(df: pd.DataFrame, cfg: MLConfig) -> pd.DataFrame:
 
 
 def build_dataset(user_id: Optional[int] = None, cfg: Optional[MLConfig] = None) -> BuiltDataset:
+    """Build supervised datasets for occurrence and optional severity tasks.
+
+    Args:
+        user_id: Optional filter to build a dataset for one user only.
+        cfg: MLConfig with label shift and rolling window parameters.
+
+    Returns:
+        BuiltDataset: Feature matrices, targets, and feature column metadata.
+    """
     cfg = cfg or MLConfig()
     df = _query_logs(user_id=user_id)
     if df.empty:

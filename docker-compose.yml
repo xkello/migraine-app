@@ -1,14 +1,14 @@
 # docker-compose.yml — local development
 #
 # Quick start:
-#   1. Copy .env.example to .env and fill in your OpenWeatherMap API key.
+#   1. Copy .env.example to .env and set WEATHER_API_KEY.
 #   2. docker compose up --build
 #   3. Open http://localhost:8000
 #
 # First run only (create an admin account):
 #   docker compose exec web python manage.py createsuperuser
 #
-# Train the ML model once you have enough logs (≥ 100):
+# Train the ML model after at least 100 logs are available:
 #   docker compose exec web python scripts/train_global_model.py
 
 services:
@@ -24,7 +24,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"   # expose so you can connect with a local DB client
+      - "5432:5432"   # Exposed for local database client access.
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-migraine_user} -d ${DB_NAME:-migraine_db}"]
       interval: 5s
@@ -59,7 +59,7 @@ services:
       # DJANGO_SUPERUSER_EMAIL:    admin@example.com
 
       # OpenWeatherMap
-      WEATHER_API_KEY: ${WEATHER_API_KEY:-your_api_key_here}
+      WEATHER_API_KEY: ${WEATHER_API_KEY:-openweather_api_key_here}
 
     volumes:
       # Bind-mount so that:

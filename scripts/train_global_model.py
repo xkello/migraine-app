@@ -50,6 +50,7 @@ logger = logging.getLogger("cron.train_global_model")
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> int:
+    """Execute one offline RF retraining run and return process exit code."""
     start = datetime.now(tz=timezone.utc)
     logger.info("=" * 60)
     logger.info("Migraine RF model — daily retraining job")

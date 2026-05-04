@@ -1,3 +1,5 @@
+"""Management command wrapper for global ML training routines."""
+
 from django.core.management.base import BaseCommand, CommandError
 
 from tracker.ml.train_global import train_global_occurrence, train_global_severity
@@ -7,6 +9,7 @@ class Command(BaseCommand):
 	help = "Train the generalized (global) ML model(s)."
 
 	def add_arguments(self, parser):
+		"""Register optional command flags."""
 		parser.add_argument(
 			"--with-severity",
 			action="store_true",
@@ -14,6 +17,7 @@ class Command(BaseCommand):
 		)
 
 	def handle(self, *args, **options):
+		"""Run occurrence training and optional severity training."""
 		self.stdout.write("Starting global occurrence training...")
 		occurrence_result = train_global_occurrence()
 		if not occurrence_result.get("ok"):

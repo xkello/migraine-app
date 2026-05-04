@@ -1,3 +1,5 @@
+"""Placeholder notification command for users in the missed-log group."""
+
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand, CommandError
 
@@ -9,6 +11,7 @@ class Command(BaseCommand):
     )
 
     def add_arguments(self, parser):
+        """Register optional command arguments for group and run mode."""
         parser.add_argument(
             "--group-name",
             default="missed_daily_log",
@@ -26,6 +29,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        """Print candidate recipients (or dry-run message) for notifications."""
         group_name = options["group_name"]
         limit = options.get("limit")
         dry_run = options.get("dry_run", False)

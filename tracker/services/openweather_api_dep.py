@@ -1,4 +1,10 @@
 # tracker/services/openweather_api_dep.py
+"""Alternative WeatherAPI.com integration helpers.
+
+This module is kept as an optional provider implementation and is not the
+primary OpenWeather-based service used by the dashboard flow.
+"""
+
 import datetime
 import logging
 from typing import Any, Dict, Optional
@@ -15,6 +21,7 @@ class WeatherAPIError(Exception):
 
 
 def _get_base_params() -> Dict[str, Any]:
+    """Build required credential parameters for WeatherAPI requests."""
     try:
         api_key = settings.WEATHER_API_KEY
     except AttributeError:
@@ -27,6 +34,7 @@ def _get_base_params() -> Dict[str, Any]:
 
 
 def _call_weatherapi(endpoint: str, params: Dict[str, Any]) -> Dict[str, Any]:
+    """Call WeatherAPI endpoint and return parsed JSON response."""
     base_url = getattr(settings, "WEATHER_API_BASE_URL", "https://api.weatherapi.com/v1")
     url = f"{base_url.rstrip('/')}/{endpoint.lstrip('/')}"
     all_params = {**_get_base_params(), **params}
@@ -82,7 +90,7 @@ def get_current_weather(location: str) -> Dict[str, Any]:
         "condition_text": cur["condition"]["text"],
         "condition_code": cur["condition"]["code"],
 
-        # air quality (if enabled on your plan)
+        # Air quality data (when enabled for the API account).
         "air_quality": cur.get("air_quality"),
     }
 
@@ -137,8 +145,8 @@ def get_daily_forecast(
                 "daily_chance_of_rain": day.get("daily_chance_of_rain"),
                 "totalprecip_mm": day["totalprecip_mm"],
                 "maxwind_kph": day["maxwind_kph"],
-                # pressure is usually only hourly, so later
-                # call the hourly API and average it yourself.
+                # Pressure is usually available only in hourly data.
+                # Aggregate hourly values separately when daily pressure is required.
                 "condition_text": day["condition"]["text"],
                 "condition_code": day["condition"]["code"],
             }

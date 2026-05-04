@@ -1,4 +1,11 @@
 # tracker/views.py
+"""Views for dashboard, daily logging, and user profile management.
+
+This module coordinates three main areas:
+1) Daily log CRUD operations.
+2) Weather enrichment for stored logs and dashboard charts.
+3) ML-based next-day migraine risk estimation for the home view.
+"""
 import json
 import logging
 
@@ -23,12 +30,29 @@ CITY = getattr(settings, "DEFAULT_CITY", "Bratislava")
 
 @login_required
 def home(request):
+    """Render the main dashboard with trends, weather, and risk estimate.
+
+    Args:
+        request: Authenticated Django HttpRequest.
+
+    Returns:
+        HttpResponse: Rendered `tracker/home.html` with chart series, weather
+        window data, and ML risk summary for the current user.
+    """
     qs = DailyLog.objects.filter(user=request.user).order_by("-date")[:120]
     logs = list(reversed(qs))
     has_data = len(logs) > 0
 
     def risk_label(p: float) -> str:
-        # simple thresholds you can tweak later
+        """Map probability to presentation label used on dashboard cards.
+
+        Args:
+            p: Predicted migraine probability in range [0, 1].
+
+        Returns:
+            str: One of translated labels: Low, Medium, High.
+        """
+        # Presentation-only risk bands for dashboard labels.
         if p < 0.20:
             return _("Low")
         if p < 0.50:
@@ -36,6 +60,14 @@ def home(request):
         return _("High")
 
     def label_icon_css(label: str) -> str:
+        """Return Bootstrap icon class for a given risk label.
+
+        Args:
+            label: Translated risk label from `risk_label`.
+
+        Returns:
+            str: CSS class string for icon + color styling.
+        """
         if label == _("Low"):
             return "bi-check-circle-fill text-success"
         if label == _("Medium"):
@@ -43,6 +75,14 @@ def home(request):
         return "bi-exclamation-octagon-fill text-danger"
 
     def friendly_feature_name(feat: str) -> str:
+        """Convert internal ML feature names into user-facing labels.
+
+        Args:
+            feat: Raw feature name produced by the ML pipeline/explainer.
+
+        Returns:
+            str: Localized, human-readable label suitable for UI explanations.
+        """
         feat = (feat or "").strip().lower()
 
         aliases = {
@@ -103,6 +143,14 @@ def home(request):
 
 
     def num_or_none(value):
+        """Convert value to float when possible, otherwise return None.
+
+        Args:
+            value: Arbitrary value coming from model fields/API payload.
+
+        Returns:
+            float | None: Parsed float, or None if conversion is not possible.
+        """
         if value is None:
             return None
         try:
@@ -144,7 +192,7 @@ def home(request):
     except UserProfile.DoesNotExist:
         city = "Bratislava"
 
-    # WEATHER: build last 30 days (today-29..today) from logs + next 3 from forecast
+    # Build fixed weather timeline for charting: past 30 days + next 3 days.
     today = timezone.localdate()
 
     # Geocode once to save API calls
@@ -153,7 +201,7 @@ def home(request):
     except Exception:
         loc = city
 
-    # weather fixed window (30 past incl today + 3 future)
+    # Create fixed x-axis date labels regardless of missing weather records.
     past_days = [today - timedelta(days=i) for i in range(30, -1, -1)]  # 30 days ago .. today
     future_days = [today + timedelta(days=i) for i in range(1, 4)]  # tomorrow .. +3
     weather_labels = past_days + future_days
@@ -165,7 +213,7 @@ def home(request):
     w_pressure = []
     w_humidity = []
 
-    # Optimize weather fetching: check cache first for all labels
+    # Prefer weather from existing logs, then cache, then external API.
     weather_data_map = {}
     missing_dates = []
 
@@ -208,7 +256,7 @@ def home(request):
             w_pressure.append(None)
             w_humidity.append(None)
 
-    # ---- ML risk prediction (tomorrow risk using latest log) ----
+    # Predict tomorrow's risk from the latest available user history.
     risk = {
         "available": False,
         "percent": None,
@@ -246,6 +294,7 @@ def home(request):
 
                 # Human-readable sentence
                 def compact_join(items):
+                    """Join a small list of labels for short explanatory text."""
                     return ", ".join(items[:3])
 
                 if risk["reasons_up"] or risk["reasons_down"]:
@@ -305,6 +354,19 @@ def home(request):
 
 @login_required
 def log_day(request):
+    """Create or update a daily log for the authenticated user.
+
+    If a log already exists for the selected date, this view edits that record
+    instead of creating a duplicate. Weather snapshot is fetched and persisted
+    for the given date when available.
+
+    Args:
+        request: Authenticated Django HttpRequest.
+
+    Returns:
+        HttpResponse: Rendered form on GET/validation errors, or redirect to
+        home on successful save.
+    """
     initial = {"date": timezone.localdate()}
 
     if request.method == "POST":
@@ -370,13 +432,22 @@ def log_day(request):
 
 @login_required
 def edit_log(request, pk):
+    """Edit an existing daily log and refresh weather fields.
+
+    Args:
+        request: Authenticated Django HttpRequest.
+        pk: Primary key of the DailyLog owned by current user.
+
+    Returns:
+        HttpResponse: Rendered form on GET/validation errors, or redirect to
+        profile on successful save.
+    """
     log = get_object_or_404(DailyLog, pk=pk, user=request.user)
     if request.method == "POST":
         form = DailyLogForm(request.POST, instance=log, user=request.user)
         if form.is_valid():
             log = form.save(commit=False)
-            # Re-fetch weather if date changed? For now keep existing or re-fetch.
-            # Re-fetch is safer if date was edited.
+            # Refresh weather snapshot so edited logs stay aligned with the selected date.
             try:
                 profile = UserProfile.objects.get(user=request.user)
                 city = profile.city or "Bratislava"
@@ -412,6 +483,15 @@ def edit_log(request, pk):
 
 @login_required
 def delete_log(request, pk):
+    """Delete a user-owned daily log after confirmation.
+
+    Args:
+        request: Authenticated Django HttpRequest.
+        pk: Primary key of the DailyLog owned by current user.
+
+    Returns:
+        HttpResponse: Confirmation page on GET, redirect to profile on POST.
+    """
     log = get_object_or_404(DailyLog, pk=pk, user=request.user)
     if request.method == "POST":
         log.delete()
@@ -421,6 +501,18 @@ def delete_log(request, pk):
 
 @login_required
 def profile(request):
+    """Render and update profile settings for the authenticated user.
+
+    The view ensures the profile row exists, normalizes legacy defaults, and
+    applies updates under a transaction lock to prevent concurrent overwrite.
+
+    Args:
+        request: Authenticated Django HttpRequest.
+
+    Returns:
+        HttpResponse: Rendered `tracker/profile.html` or redirect back to
+        profile after successful POST.
+    """
     # Safely get-or-create the profile, handling a race condition where two
     # concurrent requests could both attempt to INSERT and one gets IntegrityError.
     try:

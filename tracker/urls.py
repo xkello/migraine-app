@@ -1,3 +1,5 @@
+"""Application URL routes for dashboard, logging, profile, and logout."""
+
 from django.urls import path
 from django.contrib.auth.views import LogoutView
 from . import views

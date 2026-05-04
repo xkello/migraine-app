@@ -1,3 +1,5 @@
+"""Database models for user profile preferences and daily migraine logs."""
+
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -22,6 +24,7 @@ class UserProfile(models.Model):
     missed_days_last_incremented_on = models.DateField(null=True, blank=True)
 
     def __str__(self):
+        """Return short debug-friendly profile identifier."""
         return f"Profile({self.user.username})"
 
 
@@ -102,6 +105,7 @@ class DailyLog(models.Model):
         ]
 
     def clean(self):
+        """Validate migraine-dependent fields and enforce internal consistency."""
         # If no migraine wipe migraine-only fields
         if not self.had_migraine:
             self.migraine_intensity = None
@@ -115,4 +119,5 @@ class DailyLog(models.Model):
                 raise ValidationError({"migraine_duration_hours": "Required when 'Had migraine' is checked."})
 
     def __str__(self):
+        """Return short debug-friendly log identifier."""
         return f"Log({self.user.username} @ {self.date})"

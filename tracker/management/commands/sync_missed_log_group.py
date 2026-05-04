@@ -1,3 +1,5 @@
+"""Sync users who missed logging into a dedicated Django auth group."""
+
 from datetime import date, timedelta
 
 from django.contrib.auth import get_user_model
@@ -14,6 +16,7 @@ class Command(BaseCommand):
     )
 
     def add_arguments(self, parser):
+        """Register CLI arguments controlling target group and evaluation date."""
         parser.add_argument(
             "--group-name",
             default="missed_daily_log",
@@ -25,6 +28,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        """Compute missed-log status for yesterday and update group/profile state."""
         run_date = self._parse_run_date(options.get("run_date"))
         target_date = run_date - timedelta(days=1)
         group_name = options["group_name"]
@@ -114,6 +118,7 @@ class Command(BaseCommand):
         )
 
     def _parse_run_date(self, run_date_raw: str | None) -> date:
+        """Parse optional YYYY-MM-DD input, defaulting to local current date."""
         if not run_date_raw:
             return timezone.localdate()
 

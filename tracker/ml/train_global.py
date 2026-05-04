@@ -1,4 +1,9 @@
 from __future__ import annotations
+"""Offline training routines for global migraine ML models.
+
+This module contains the production Random Forest trainer and an optional
+severity regressor used for experimentation/supporting outputs.
+"""
 
 import logging
 import shutil
@@ -26,6 +31,7 @@ logger = logging.getLogger(__name__)
 # ------------------------------------------------------------------ #
 
 def _time_split(X, y, test_fraction: float = 0.3):
+    """Split ordered data into train/test partitions without shuffling."""
     n = len(X)
     if n < 5:
         return X, X, y, y
@@ -44,7 +50,13 @@ def train_rf_occurrence(cfg: MLConfig | None = None) -> Dict[str, Any]:
     Train a Random Forest classifier to predict next-day migraine occurrence.
 
     This function is designed to be called offline (nightly cron).
-    It will NOT overwrite the existing model artifact when safety guards fail.
+    It will not overwrite the existing model artifact when safety guards fail.
+
+    Args:
+        cfg: Optional MLConfig override.
+
+    Returns:
+        Dict[str, Any]: Training status, metrics, artifact path, and top features.
     """
     cfg = cfg or MLConfig()
     trained_at = datetime.now(tz=timezone.utc).isoformat()
@@ -215,7 +227,7 @@ def train_rf_occurrence(cfg: MLConfig | None = None) -> Dict[str, Any]:
 # ------------------------------------------------------------------ #
 
 def train_global_occurrence(cfg: MLConfig | None = None) -> Dict[str, Any]:
-    """Alias for train_rf_occurrence — kept so existing management commands work."""
+    """Backward-compatible alias for the production RF occurrence trainer."""
     return train_rf_occurrence(cfg=cfg)
 
 
@@ -224,7 +236,7 @@ def train_global_occurrence(cfg: MLConfig | None = None) -> Dict[str, Any]:
 # ------------------------------------------------------------------ #
 
 def train_global_severity(cfg: MLConfig | None = None) -> Dict[str, Any]:
-    """Optional: train a severity regressor on migraine days only."""
+    """Train optional global severity regressor on migraine-day rows only."""
     from sklearn.linear_model import SGDRegressor
 
     cfg = cfg or MLConfig()

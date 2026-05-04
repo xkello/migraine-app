@@ -1,4 +1,5 @@
 from __future__ import annotations
+"""Model explanation helpers for UI-friendly risk factor summaries."""
 
 from typing import Dict, Any
 import numpy as np
@@ -58,6 +59,12 @@ def _unwrap_pipeline(model_obj):
     If model_obj is a CalibratedClassifierCV, the trained base estimator
     (our Pipeline) is stored in calibrated_classifiers_[0].estimator.
     Otherwise, return the object as-is.
+
+    Args:
+        model_obj: Calibrated estimator or plain sklearn Pipeline.
+
+    Returns:
+        Pipeline-like estimator exposing `named_steps` when available.
     """
     if hasattr(model_obj, "calibrated_classifiers_") and model_obj.calibrated_classifiers_:
         return model_obj.calibrated_classifiers_[0].estimator

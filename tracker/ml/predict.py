@@ -1,4 +1,9 @@
 from __future__ import annotations
+"""Runtime prediction entrypoints for migraine risk estimation.
+
+The production request flow loads a previously trained model artifact and
+performs inference only; no tuning or retraining is done in requests.
+"""
 
 from functools import lru_cache
 from typing import Dict, Any, Optional, Tuple
@@ -57,9 +62,17 @@ def predict_next_day_risk(
     with_explain: bool = True,
 ) -> Dict[str, Any]:
     """
-    Predict migraine risk for the next day based on the user's latest available log.
+    Predict migraine risk for the next day based on the user's latest log.
 
-    Returns a dict with the following keys (all present regardless of model type):
+    Args:
+        user_id: ID of the authenticated user.
+        cfg: Optional MLConfig override.
+        with_explain: Include model explanation payload when True.
+
+    Returns:
+        Dict[str, Any]: Prediction payload.
+
+    Payload keys (all present regardless of model type):
         ok              – bool: False if prediction could not be made
         reason          – str: why prediction failed (only when ok=False)
         p_final         – float: probability of migraine [0, 1]  (backward-compat alias)

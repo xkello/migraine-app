@@ -1,4 +1,8 @@
 from __future__ import annotations
+"""Preprocessing pipeline factory shared by training and inference.
+
+Keeping transformations in one place prevents train/inference drift.
+"""
 
 from typing import List
 
@@ -21,12 +25,18 @@ CATEGORICAL_FEATURE_NAMES = {
 
 def make_preprocess(feature_columns: List[str]) -> ColumnTransformer:
     """
-    Preprocessing pipeline for the Random Forest classifier.
+    Build a ColumnTransformer for the Random Forest classifier.
 
     - Categorical columns: mode imputation + one-hot encoding
       (handle_unknown="ignore" so unseen categories at inference do not crash)
     - Numeric / boolean columns: median imputation
       (scaling is intentionally omitted — not required for Random Forest)
+
+    Args:
+        feature_columns: Raw feature columns produced by `features.build_dataset`.
+
+    Returns:
+        ColumnTransformer: Ready to plug into an sklearn Pipeline.
     """
     categorical = [c for c in feature_columns if c in CATEGORICAL_FEATURE_NAMES]
     numeric = [c for c in feature_columns if c not in CATEGORICAL_FEATURE_NAMES]

@@ -1,3 +1,5 @@
+"""Django admin registrations and list customizations for tracker models."""
+
 from django.contrib import admin
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import get_user_model
@@ -27,11 +29,13 @@ class UserAdmin(DjangoUserAdmin):
 
     @admin.display(description="Missed days")
     def missed_days_count(self, obj):
+        """Expose missed-day counter from related UserProfile in list view."""
         profile = getattr(obj, "userprofile", None)
         return profile.missed_days_count if profile else 0
 
     @admin.display(boolean=True, description="In missed group")
     def missed_in_group(self, obj):
+        """Show whether user currently belongs to missed-log notification group."""
         return obj.groups.filter(name="missed_daily_log").exists()
 
 

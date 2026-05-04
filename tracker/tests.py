@@ -1,3 +1,5 @@
+"""Test coverage for missed-log group synchronization management command."""
+
 from datetime import date
 
 from django.contrib.auth import get_user_model
@@ -9,7 +11,10 @@ from tracker.models import DailyLog, UserProfile
 
 
 class MissedLogGroupCommandTests(TestCase):
+    """Validate group membership and counter updates for missed-day workflow."""
+
     def setUp(self):
+        """Create one active user/profile fixture used by all test cases."""
         self.user_model = get_user_model()
         self.user = self.user_model.objects.create_user(
             username="alice", password="password123"
@@ -18,6 +23,7 @@ class MissedLogGroupCommandTests(TestCase):
         self.group_name = "missed_daily_log"
 
     def test_adds_user_and_increments_counter_when_missed(self):
+        """User without yesterday log is added to group and counter increments."""
         call_command("sync_missed_log_group", run_date="2026-03-25")
 
         self.profile.refresh_from_db()
@@ -28,6 +34,7 @@ class MissedLogGroupCommandTests(TestCase):
         self.assertTrue(group.user_set.filter(id=self.user.id).exists())
 
     def test_same_day_rerun_is_idempotent(self):
+        """Running sync twice for same date must not increment counter twice."""
         call_command("sync_missed_log_group", run_date="2026-03-25")
         call_command("sync_missed_log_group", run_date="2026-03-25")
 
@@ -35,6 +42,7 @@ class MissedLogGroupCommandTests(TestCase):
         self.assertEqual(self.profile.missed_days_count, 1)
 
     def test_user_with_yesterday_log_removed_and_counter_reset(self):
+        """User who logged yesterday is removed from group and counter resets."""
         group, _ = Group.objects.get_or_create(name=self.group_name)
         group.user_set.add(self.user)
 

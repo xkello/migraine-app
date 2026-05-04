@@ -22,6 +22,7 @@ from django.conf import settings as django_settings
 
 
 def root_redirect(request):
+    """Redirect bare root URL to language-prefixed root based on cookie."""
     lang_cookie = request.COOKIES.get(django_settings.LANGUAGE_COOKIE_NAME, "")
     supported = {code for code, _ in django_settings.LANGUAGES}
     lang = lang_cookie if lang_cookie in supported else django_settings.LANGUAGE_CODE

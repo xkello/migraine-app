@@ -1,4 +1,5 @@
 from __future__ import annotations
+"""Persistence helpers for ML artifacts and metadata files."""
 
 import json
 from dataclasses import dataclass
@@ -11,6 +12,7 @@ from django.conf import settings
 
 @dataclass(frozen=True)
 class ModelPaths:
+    """Canonical filesystem paths used by training and inference modules."""
     base: Path
 
     # ------------------------------------------------------------------ #
@@ -50,6 +52,7 @@ class ModelPaths:
 
 
 def get_model_paths() -> ModelPaths:
+    """Resolve model base directory from settings and return path helpers."""
     base = getattr(settings, "ML_MODELS_DIR", None)
     if base is None:
         base_dir = getattr(settings, "BASE_DIR", None)
@@ -60,19 +63,23 @@ def get_model_paths() -> ModelPaths:
 
 
 def save_model(obj: Any, path: Path) -> None:
+    """Serialize a Python object with joblib to the target path."""
     get_model_paths().ensure_parent(path)
     joblib.dump(obj, path)
 
 
 def load_model(path: Path) -> Any:
+    """Load a joblib-serialized model artifact from disk."""
     return joblib.load(path)
 
 
 def save_json(obj: Any, path: Path) -> None:
+    """Persist JSON metadata with UTF-8 encoding and stable indentation."""
     get_model_paths().ensure_parent(path)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(obj, f, indent=2, default=str)
 
 
 def model_exists(path: Path) -> bool:
+    """Return True when the artifact path exists and is a regular file."""
     return path.exists() and path.is_file()

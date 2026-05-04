@@ -1,4 +1,6 @@
 # tracker/forms.py
+"""Form definitions for daily logs and user profile settings."""
+
 from django import forms
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -8,7 +10,13 @@ from .services import openweather
 
 
 class DailyLogForm(forms.ModelForm):
+    """Form used to create/update one DailyLog record.
+
+    Applies UI widget classes and validates date uniqueness per user.
+    """
+
     def __init__(self, *args, user=None, **kwargs):
+        """Initialize widgets and remember current user for duplicate checks."""
         super().__init__(*args, **kwargs)
         self.user = user
 
@@ -44,15 +52,17 @@ class DailyLogForm(forms.ModelForm):
         model = DailyLog
         exclude = ("user", "weather_temp_c", "weather_humidity", "weather_pressure_hpa",
                    "weather_wind_speed", "weather_cloudiness", "weather_description")
-        # or list your included fields explicitly if you prefer
+        # Alternatively, define an explicit `fields` list.
 
     def clean_date(self):
+        """Block future dates at form-validation level."""
         d = self.cleaned_data.get("date")
         if d and d > timezone.localdate():
             raise ValidationError(_("You cannot log a future date."))
         return d
 
     def clean(self):
+        """Run cross-field validation and migraine-conditional requirements."""
         cleaned = super().clean()
         d = cleaned.get("date")
         had = cleaned.get("had_migraine")
@@ -80,6 +90,8 @@ class DailyLogForm(forms.ModelForm):
 
 
 class ProfileForm(forms.ModelForm):
+    """Profile settings form including city and language preferences."""
+
     class Meta:
         model = UserProfile
         fields = ["city", "show_menstruation", "preferred_language"]
@@ -95,6 +107,7 @@ class ProfileForm(forms.ModelForm):
         }
 
     def clean_city(self):
+        """Validate city name through geocoding to catch unsupported inputs."""
         city = self.cleaned_data.get("city")
         if city:
             try:

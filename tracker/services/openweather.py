@@ -1,3 +1,9 @@
+"""OpenWeather integration utilities used by forms, views, and data scripts.
+
+The module provides helpers for geocoding, current/forecast/historical weather,
+and normalized snapshots for a specific date or date range.
+"""
+
 import requests
 from django.conf import settings
 from django.core.cache import cache
@@ -9,10 +15,15 @@ from django.utils import timezone
 
 
 class WeatherAPIError(Exception):
+    """Raised when OpenWeather request/response handling fails."""
     pass
 
 
 def _to_celsius(x):
+    """Normalize temperature values to Celsius.
+
+    OpenWeather historical endpoints can return Kelvin in some plans/configs.
+    """
     # OpenWeather history often returns Kelvin
     if x is None:
         return None
@@ -21,6 +32,7 @@ def _to_celsius(x):
 
 # Low-level request helper
 def _call(base_url, endpoint, params):
+    """Perform a GET call to OpenWeather and return parsed JSON payload."""
     params["appid"] = settings.WEATHER_API_KEY
     url = f"{base_url}{endpoint}"
 
@@ -35,6 +47,7 @@ def _call(base_url, endpoint, params):
 
 # Geocoding (city → lat/lon)
 def geocode(city: str):
+    """Resolve city name into location metadata (lat/lon/name/country)."""
     cache_key = f"geocode_{city.lower().replace(' ', '_')}"
     res = cache.get(cache_key)
     if res:
@@ -59,6 +72,7 @@ def geocode(city: str):
 
 
 def _get_loc(city_or_loc):
+    """Accept either location dict or city string and return location dict."""
     if isinstance(city_or_loc, dict) and "lat" in city_or_loc and "lon" in city_or_loc:
         return city_or_loc
     return geocode(city_or_loc)
@@ -66,6 +80,7 @@ def _get_loc(city_or_loc):
 
 # CURRENT WEATHER
 def get_current_weather(city_or_loc):
+    """Fetch current weather snapshot for a city or resolved location dict."""
     loc = _get_loc(city_or_loc)
     data = _call(
         settings.OWM_API_BASE,
@@ -86,6 +101,7 @@ def get_current_weather(city_or_loc):
 
 # FORECAST (5-day, 3h intervals)
 def get_forecast(city_or_loc, days: int = 3):
+    """Fetch 5-day/3-hour forecast and return normalized entries."""
     loc = _get_loc(city_or_loc)
     data = _call(
         settings.OWM_API_BASE,
@@ -147,8 +163,16 @@ def get_daily_forecast(city_or_loc, days: int = 3):
 # HISTORICAL WEATHER (PAID API)
 def get_historical_weather(city_or_loc, start, end, interval="hour"):
     """
-    start/end = UNIX timestamps
-    interval = "hour" or "day"
+    Fetch historical weather rows for a time range.
+
+    Args:
+        city_or_loc: City name or location dict.
+        start: Range start as UNIX timestamp.
+        end: Range end as UNIX timestamp.
+        interval: "hour" or "day" granularity.
+
+    Returns:
+        list[dict]: Normalized weather rows.
     """
 
     loc = _get_loc(city_or_loc)
@@ -182,6 +206,7 @@ def get_historical_weather(city_or_loc, start, end, interval="hour"):
 
 # AIR QUALITY
 def get_air_quality(city_or_loc):
+    """Fetch current air-quality measurements for the target location."""
     loc = _get_loc(city_or_loc)
     data = _call(
         settings.OWM_API_BASE,
@@ -201,7 +226,7 @@ def get_air_quality(city_or_loc):
 
 def get_weather_for_date(city_or_loc, day):
     """
-    One representative snapshot for a date.
+    Return one representative weather snapshot for a specific date.
     - past -> historical (avg over the day)
     - today -> current
     - future -> forecast (closest to 12:00 local time)
@@ -281,8 +306,15 @@ def get_weather_for_date(city_or_loc, day):
 
 def get_weather_for_range(city_or_loc, dates):
     """
-    Fetch weather for a list of dates as efficiently as possible.
-    Returns {date_obj: weather_dict}
+    Fetch weather for multiple dates with minimal API calls.
+
+    Strategy:
+    - past dates: one bulk historical query then group by local day,
+    - today: one current weather query,
+    - future dates: one forecast query and nearest-noon selection per day.
+
+    Returns:
+        dict[date, dict]: Mapping of date to normalized weather payload.
     """
     if not dates:
         return {}
