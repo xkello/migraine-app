@@ -1,0 +1,431 @@
+# eda_migraine_and_classification_benchmark.R
+
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(GGally)
+library(patchwork)
+library(tidymodels)
+library(glmnet)
+library(kernlab)
+library(ranger)
+
+set.seed(42)
+
+# =========================
+# Shared data loader
+# =========================
+load_migraine_data <- function(path = "generated_dataset.csv", model_df = FALSE) {
+  df <- read_csv(path, show_col_types = FALSE) |>
+    clean_names() |>
+    mutate(
+      date = as.Date(date),
+      had_migraine = factor(
+        if_else(had_migraine %in% c(TRUE, 1, "1", "true"), "yes", "no"),
+        levels = c("yes", "no")
+      ),
+      had_migraine_num = if_else(had_migraine == "yes", 1, 0),
+      menstruation = factor(
+        if_else(is.na(menstruation), FALSE, menstruation),
+        levels = c(FALSE, TRUE),
+        labels = c("no", "yes")
+      ),
+      user_id = factor(user_id),
+      weekday = factor(wday(date, label = TRUE)),
+      month = factor(month(date, label = TRUE)),
+      weekend = factor(if_else(weekday %in% c("Sat", "Sun"), "yes", "no")),
+      weather_description = factor(weather_description)
+    )
+  
+  if (model_df) {
+    df <- df |>
+      select(
+        had_migraine,   # keep only this
+        user_id, date, weekday, month,
+        sleep_hours, physical_activity_minutes, stress_level, caffeine_mg,
+        weather_temp_c, weather_humidity, weather_pressure_hpa,
+        weather_wind_speed, weather_cloudiness, weather_description,
+        alcohol_consumption, heavy_meals, hydration_liters,
+        menstruation, physical_activity_difficulty
+      )
+  }
+  
+  df
+}
+
+# =========================
+# EDA
+# =========================
+df_eda <- load_migraine_data(model_df = FALSE)
+
+levels(df_eda$had_migraine)
+glimpse(df_eda)
+summary(df_eda)
+
+# 1. Missingness
+missing_tbl <- df_eda |>
+  summarise(across(everything(), ~mean(is.na(.)))) |>
+  pivot_longer(everything(), names_to = "feature", values_to = "missing_rate") |>
+  arrange(desc(missing_rate))
+
+print(missing_tbl)
+
+ggplot(missing_tbl, aes(x = reorder(feature, missing_rate), y = missing_rate)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(title = "Missingness by feature", x = NULL, y = "Missing rate")
+
+# 2. Class balance
+ggplot(df_eda, aes(x = had_migraine, fill = had_migraine)) +
+  geom_bar() +
+  labs(title = "Class balance: had_migraine")
+
+# 3. Numeric distributions
+num_vars <- c(
+  "sleep_hours", "physical_activity_minutes", "stress_level", "caffeine_mg",
+  "weather_temp_c", "weather_humidity", "weather_pressure_hpa",
+  "weather_wind_speed", "weather_cloudiness", "alcohol_consumption",
+  "heavy_meals", "hydration_liters", "physical_activity_difficulty",
+  "migraine_intensity", "migraine_duration_hours"
+)
+
+df_eda |>
+  select(any_of(num_vars)) |>
+  pivot_longer(everything(), names_to = "feature", values_to = "value") |>
+  ggplot(aes(x = value)) +
+  geom_histogram(bins = 30, fill = "darkcyan", color = "white") +
+  facet_wrap(~feature, scales = "free", ncol = 3) +
+  labs(title = "Distributions of numeric variables")
+
+# 4. Compare migraine vs non-migraine days
+compare_vars <- c(
+  "sleep_hours", "stress_level", "hydration_liters",
+  "weather_temp_c", "weather_humidity", "weather_pressure_hpa",
+  "weather_wind_speed", "caffeine_mg", "physical_activity_minutes"
+)
+
+df_eda |>
+  select(had_migraine, any_of(compare_vars)) |>
+  pivot_longer(-had_migraine, names_to = "feature", values_to = "value") |>
+  ggplot(aes(x = had_migraine, y = value, fill = had_migraine)) +
+  geom_boxplot(outlier.alpha = 0.2) +
+  facet_wrap(~feature, scales = "free", ncol = 3) +
+  labs(title = "Feature values by migraine occurrence")
+
+# 5. Correlations
+df_num <- df_eda |>
+  select(any_of(compare_vars), migraine_intensity, migraine_duration_hours) |>
+  select(where(is.numeric))
+
+corr <- cor(df_num, use = "pairwise.complete.obs")
+print(corr)
+
+GGally::ggcorr(df_num, label = TRUE, label_round = 2)
+
+# 6. Temporal trend
+daily_rate <- df_eda |>
+  group_by(date) |>
+  summarise(migraine_rate = mean(had_migraine == "yes"), .groups = "drop")
+
+ggplot(daily_rate, aes(date, migraine_rate)) +
+  geom_line(color = "firebrick") +
+  geom_smooth(se = FALSE, method = "loess") +
+  labs(title = "Daily migraine rate over time")
+
+# 7. Per-user frequency
+user_rate <- df_eda |>
+  group_by(user_id) |>
+  summarise(
+    n = n(),
+    migraine_rate = mean(had_migraine == "yes"),
+    .groups = "drop"
+  )
+
+ggplot(user_rate, aes(x = reorder(user_id, migraine_rate), y = migraine_rate)) +
+  geom_col(fill = "orchid4") +
+  coord_flip() +
+  labs(title = "Migraine rate by user", x = "User", y = "Rate")
+
+# 8. Violin plots for selected variables
+df_model <- load_migraine_data(model_df = TRUE)
+
+df_model |>
+  select(had_migraine, sleep_hours, stress_level, hydration_liters, weather_pressure_hpa) |>
+  pivot_longer(-had_migraine, names_to = "feature", values_to = "value") |>
+  ggplot(aes(x = had_migraine, y = value, fill = had_migraine)) +
+  geom_violin(trim = FALSE, alpha = 0.5) +
+  geom_boxplot(width = 0.15, outlier.alpha = 0.2) +
+  facet_wrap(~feature, scales = "free", ncol = 2)
+
+# =========================
+# Classification benchmark
+# =========================
+
+# Main split parameter
+# Tento parameter sa mení pri experimentoch so splitom.
+TRAIN_RATIO <- 0.85
+
+df_model <- load_migraine_data(model_df = TRUE)
+
+# Time-based split
+all_dates <- sort(unique(df_model$date))
+split_date <- all_dates[floor(TRAIN_RATIO * length(all_dates))]
+
+train_data <- df_model |> filter(date <= split_date)
+test_data  <- df_model |> filter(date > split_date)
+
+cat("\nTrain ratio:", TRAIN_RATIO, "\n")
+cat("Split date:", as.character(split_date), "\n")
+cat("Train rows:", nrow(train_data), "\n")
+cat("Test rows:", nrow(test_data), "\n")
+cat("Train migraine rate:", mean(train_data$had_migraine == "yes"), "\n")
+cat("Test migraine rate:", mean(test_data$had_migraine == "yes"), "\n")
+
+# Preprocessing recipe
+# user_id je odstránené, pretože ide o technický identifikátor používateľa,
+# nie o vecný prediktor migrény.
+rec <- recipe(had_migraine ~ ., data = train_data) |>
+  update_role(date, new_role = "id") |>
+  step_rm(date, user_id) |>
+  step_impute_median(all_numeric_predictors()) |>
+  step_impute_mode(all_nominal_predictors()) |>
+  step_novel(all_nominal_predictors()) |>
+  step_dummy(all_nominal_predictors()) |>
+  step_zv(all_predictors()) |>
+  step_normalize(all_numeric_predictors())
+
+cv <- vfold_cv(train_data, v = 5, strata = had_migraine)
+
+# Models
+log_reg_spec <- logistic_reg(penalty = tune(), mixture = tune()) |>
+  set_engine("glmnet")
+
+svm_spec <- svm_rbf(cost = tune(), rbf_sigma = tune()) |>
+  set_engine("kernlab") |>
+  set_mode("classification")
+
+rf_spec <- rand_forest(mtry = tune(), min_n = tune(), trees = 500) |>
+  set_engine("ranger", importance = "impurity") |>
+  set_mode("classification")
+
+boost_spec <- boost_tree(
+  trees = 500,
+  tree_depth = tune(),
+  learn_rate = tune(),
+  loss_reduction = tune(),
+  min_n = tune()
+) |>
+  set_engine("xgboost") |>
+  set_mode("classification")
+
+# Workflows
+wf_log   <- workflow() |> add_recipe(rec) |> add_model(log_reg_spec)
+wf_svm   <- workflow() |> add_recipe(rec) |> add_model(svm_spec)
+wf_rf    <- workflow() |> add_recipe(rec) |> add_model(rf_spec)
+wf_boost <- workflow() |> add_recipe(rec) |> add_model(boost_spec)
+
+# Metrics valid for all classification models
+metrics_cls <- metric_set(
+  yardstick::roc_auc,
+  yardstick::accuracy,
+  yardstick::sens,
+  yardstick::spec,
+  yardstick::f_meas
+)
+
+# Tuning only on training data
+ctrl <- control_grid(save_pred = TRUE)
+
+res_log   <- tune_grid(wf_log,   resamples = cv, grid = 20, metrics = metrics_cls, control = ctrl)
+res_svm   <- tune_grid(wf_svm,   resamples = cv, grid = 20, metrics = metrics_cls, control = ctrl)
+res_rf    <- tune_grid(wf_rf,    resamples = cv, grid = 20, metrics = metrics_cls, control = ctrl)
+res_boost <- tune_grid(wf_boost, resamples = cv, grid = 20, metrics = metrics_cls, control = ctrl)
+
+# =========================
+# Training-set CV comparison
+# This table/plot is used in the implementation chapter
+# to justify model choice before touching the test set.
+# =========================
+
+cv_results <- bind_rows(
+  collect_metrics(res_log)   |> mutate(model = "Logistic regression"),
+  collect_metrics(res_svm)   |> mutate(model = "SVM"),
+  collect_metrics(res_rf)    |> mutate(model = "Random Forest"),
+  collect_metrics(res_boost) |> mutate(model = "XGBoost")
+)
+
+CLASS_THRESHOLD <- 0.35
+
+cv_class_metrics <- function(res, model_name, threshold = CLASS_THRESHOLD) {
+  best <- select_best(res, metric = "roc_auc")
+  
+  preds <- collect_predictions(res, parameters = best) |>
+    mutate(
+      .pred_class = factor(
+        if_else(.pred_yes >= threshold, "yes", "no"),
+        levels = c("yes", "no")
+      )
+    )
+  
+  tibble(
+    model = model_name,
+    threshold = threshold,
+    `ROC AUC` = yardstick::roc_auc(preds, truth = had_migraine, .pred_yes)$.estimate,
+    Accuracy = yardstick::accuracy(preds, truth = had_migraine, estimate = .pred_class)$.estimate,
+    Sensitivity = yardstick::sens(preds, truth = had_migraine, estimate = .pred_class)$.estimate,
+    Specificity = yardstick::spec(preds, truth = had_migraine, estimate = .pred_class)$.estimate,
+    F1 = yardstick::f_meas(preds, truth = had_migraine, estimate = .pred_class)$.estimate
+  )
+}
+
+cv_wide <- bind_rows(
+  cv_class_metrics(res_log, "Logistic regression"),
+  cv_class_metrics(res_svm, "SVM"),
+  cv_class_metrics(res_rf, "Random Forest"),
+  cv_class_metrics(res_boost, "XGBoost")
+) |>
+  arrange(desc(`ROC AUC`))
+
+print(cv_wide)
+
+# Ukazuje metriky z cross-validation, teda ešte pred finálnym testovaním RF.
+cv_plot <- cv_wide |>
+  pivot_longer(
+    cols = c(`ROC AUC`, Accuracy, Sensitivity, Specificity, F1),
+    names_to = "metric",
+    values_to = "value"
+  )
+
+ggplot(cv_plot, aes(x = reorder(model, value), y = value, fill = model)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  facet_wrap(~metric, scales = "free_x") +
+  labs(
+    title = "Porovnanie modelov na tréningovej množine",
+    subtitle = paste("Výsledky 5-násobnej krížovej validácie, threshold =", CLASS_THRESHOLD),
+    x = "Model",
+    y = "Hodnota metriky"
+  ) +
+  theme_minimal()
+
+# focused ROC AUC plot for model choice
+ggplot(cv_wide, aes(x = reorder(model, `ROC AUC`), y = `ROC AUC`, fill = model)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  labs(
+    title = "Porovnanie modelov podľa ROC AUC",
+    subtitle = "Metrika použitá pre výber modelu na tréningovej množine",
+    x = "Model",
+    y = "ROC AUC"
+  ) +
+  theme_minimal()
+
+# Select best hyperparameters by ROC AUC
+best_log   <- select_best(res_log, metric = "roc_auc")
+best_svm   <- select_best(res_svm, metric = "roc_auc")
+best_rf    <- select_best(res_rf, metric = "roc_auc")
+best_boost <- select_best(res_boost, metric = "roc_auc")
+
+# Finalize RF only for final test evaluation
+final_rf <- finalize_workflow(wf_rf, best_rf)
+
+# Fit Random Forest on full training data
+fit_rf <- fit(final_rf, train_data)
+
+# =========================
+# Final RF evaluation on test set
+# Test set is used only here.
+# =========================
+
+# Threshold tuning for final RF classification
+RF_THRESHOLD <- 0.35
+
+rf_preds <- predict(fit_rf, test_data, type = "prob") |>
+  bind_cols(test_data |> select(had_migraine)) |>
+  mutate(
+    .pred_class = factor(
+      if_else(.pred_yes >= RF_THRESHOLD, "yes", "no"),
+      levels = c("yes", "no")
+    )
+  )
+
+cat("\nRF classification threshold:", RF_THRESHOLD, "\n")
+
+rf_test_metrics <- tibble(
+  model = "Random Forest",
+  roc_auc = roc_auc(rf_preds, truth = had_migraine, .pred_yes)$.estimate,
+  accuracy = accuracy(rf_preds, truth = had_migraine, estimate = .pred_class)$.estimate,
+  sensitivity = sens(rf_preds, truth = had_migraine, estimate = .pred_class)$.estimate,
+  specificity = yardstick::spec(rf_preds, truth = had_migraine, estimate = .pred_class)$.estimate,
+  f1 = f_meas(rf_preds, truth = had_migraine, estimate = .pred_class)$.estimate
+)
+
+print(rf_test_metrics)
+
+# Confusion matrix
+conf_mat(rf_preds, truth = had_migraine, estimate = .pred_class)
+
+# ROC curve for final RF
+rf_roc <- roc_curve(rf_preds, truth = had_migraine, .pred_yes)
+
+autoplot(rf_roc) +
+  labs(
+    title = "ROC krivka finálneho modelu Random Forest",
+    subtitle = paste("AUC =", round(rf_test_metrics$roc_auc, 3))
+  ) +
+  theme_minimal()
+
+# Predicted probability distribution
+rf_preds |>
+  ggplot(aes(x = .pred_yes, fill = had_migraine)) +
+  geom_histogram(bins = 30, alpha = 0.6, position = "identity") +
+  labs(
+    title = "Distribúcia predikovaných pravdepodobností",
+    subtitle = "Finálny Random Forest na testovacej množine",
+    x = "Predikovaná pravdepodobnosť triedy 'yes'",
+    y = "Počet záznamov"
+  ) +
+  theme_minimal()
+
+# Variable importance
+rf_fit_obj <- extract_fit_parsnip(fit_rf)$fit
+
+importance_tbl <- tibble(
+  feature = names(rf_fit_obj$variable.importance),
+  importance = as.numeric(rf_fit_obj$variable.importance)
+) |>
+  arrange(desc(importance))
+
+print(head(importance_tbl, 15))
+
+importance_tbl |>
+  slice_max(order_by = importance, n = 15) |>
+  ggplot(aes(x = reorder(feature, importance), y = importance)) +
+  geom_col(fill = "forestgreen") +
+  coord_flip() +
+  labs(
+    title = "Najdôležitejšie premenné finálneho Random Forest modelu",
+    x = "Premenná",
+    y = "Dôležitosť"
+  ) +
+  theme_minimal()
+
+
+
+
+# Confusion matrix plot
+rf_conf_mat <- yardstick::conf_mat(
+  rf_preds,
+  truth = had_migraine,
+  estimate = .pred_class
+)
+
+autoplot(rf_conf_mat, type = "heatmap") +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  labs(
+    title = "Konfúzna matica finálneho modelu Random Forest",
+    subtitle = paste("Threshold =", RF_THRESHOLD),
+    x = "Skutočná trieda",
+    y = "Predikovaná trieda"
+  ) +
+  theme_minimal()

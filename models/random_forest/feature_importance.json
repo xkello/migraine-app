@@ -1,0 +1,262 @@
+[
+  {
+    "rank": 1,
+    "feature": "sleep_hours",
+    "importance": 0.0
+  },
+  {
+    "rank": 2,
+    "feature": "physical_activity_minutes",
+    "importance": 0.0
+  },
+  {
+    "rank": 3,
+    "feature": "physical_activity_difficulty",
+    "importance": 0.0
+  },
+  {
+    "rank": 4,
+    "feature": "stress_level",
+    "importance": 0.0
+  },
+  {
+    "rank": 5,
+    "feature": "caffeine_mg",
+    "importance": 0.0
+  },
+  {
+    "rank": 6,
+    "feature": "heavy_meals",
+    "importance": 0.0
+  },
+  {
+    "rank": 7,
+    "feature": "hydration_liters",
+    "importance": 0.0
+  },
+  {
+    "rank": 8,
+    "feature": "alcohol_consumption",
+    "importance": 0.0
+  },
+  {
+    "rank": 9,
+    "feature": "weather_temp_c",
+    "importance": 0.0
+  },
+  {
+    "rank": 10,
+    "feature": "weather_humidity",
+    "importance": 0.0
+  },
+  {
+    "rank": 11,
+    "feature": "weather_pressure_hpa",
+    "importance": 0.0
+  },
+  {
+    "rank": 12,
+    "feature": "weather_wind_speed",
+    "importance": 0.0
+  },
+  {
+    "rank": 13,
+    "feature": "weather_cloudiness",
+    "importance": 0.0
+  },
+  {
+    "rank": 14,
+    "feature": "had_migraine_lag1",
+    "importance": 0.0
+  },
+  {
+    "rank": 15,
+    "feature": "sleep_hours_lag1",
+    "importance": 0.0
+  },
+  {
+    "rank": 16,
+    "feature": "stress_level_lag1",
+    "importance": 0.0
+  },
+  {
+    "rank": 17,
+    "feature": "caffeine_mg_lag1",
+    "importance": 0.0
+  },
+  {
+    "rank": 18,
+    "feature": "hydration_liters_lag1",
+    "importance": 0.0
+  },
+  {
+    "rank": 19,
+    "feature": "alcohol_consumption_lag1",
+    "importance": 0.0
+  },
+  {
+    "rank": 20,
+    "feature": "weather_pressure_hpa_lag1",
+    "importance": 0.0
+  },
+  {
+    "rank": 21,
+    "feature": "weather_temp_c_lag1",
+    "importance": 0.0
+  },
+  {
+    "rank": 22,
+    "feature": "weather_humidity_lag1",
+    "importance": 0.0
+  },
+  {
+    "rank": 23,
+    "feature": "weather_pressure_hpa_delta1",
+    "importance": 0.0
+  },
+  {
+    "rank": 24,
+    "feature": "weather_temp_c_delta1",
+    "importance": 0.0
+  },
+  {
+    "rank": 25,
+    "feature": "weather_humidity_delta1",
+    "importance": 0.0
+  },
+  {
+    "rank": 26,
+    "feature": "sleep_hours_roll_mean_3",
+    "importance": 0.0
+  },
+  {
+    "rank": 27,
+    "feature": "stress_level_roll_mean_3",
+    "importance": 0.0
+  },
+  {
+    "rank": 28,
+    "feature": "caffeine_mg_roll_mean_3",
+    "importance": 0.0
+  },
+  {
+    "rank": 29,
+    "feature": "hydration_liters_roll_mean_3",
+    "importance": 0.0
+  },
+  {
+    "rank": 30,
+    "feature": "alcohol_consumption_roll_mean_3",
+    "importance": 0.0
+  },
+  {
+    "rank": 31,
+    "feature": "heavy_meals_roll_mean_3",
+    "importance": 0.0
+  },
+  {
+    "rank": 32,
+    "feature": "migraine_roll_sum_3",
+    "importance": 0.0
+  },
+  {
+    "rank": 33,
+    "feature": "sleep_hours_roll_mean_7",
+    "importance": 0.0
+  },
+  {
+    "rank": 34,
+    "feature": "stress_level_roll_mean_7",
+    "importance": 0.0
+  },
+  {
+    "rank": 35,
+    "feature": "caffeine_mg_roll_mean_7",
+    "importance": 0.0
+  },
+  {
+    "rank": 36,
+    "feature": "hydration_liters_roll_mean_7",
+    "importance": 0.0
+  },
+  {
+    "rank": 37,
+    "feature": "alcohol_consumption_roll_mean_7",
+    "importance": 0.0
+  },
+  {
+    "rank": 38,
+    "feature": "heavy_meals_roll_mean_7",
+    "importance": 0.0
+  },
+  {
+    "rank": 39,
+    "feature": "migraine_roll_sum_7",
+    "importance": 0.0
+  },
+  {
+    "rank": 40,
+    "feature": "menstruation_no",
+    "importance": 0.0
+  },
+  {
+    "rank": 41,
+    "feature": "weather_description_",
+    "importance": 0.0
+  },
+  {
+    "rank": 42,
+    "feature": "weather_description_clear sky",
+    "importance": 0.0
+  },
+  {
+    "rank": 43,
+    "feature": "weekday_Fri",
+    "importance": 0.0
+  },
+  {
+    "rank": 44,
+    "feature": "weekday_Mon",
+    "importance": 0.0
+  },
+  {
+    "rank": 45,
+    "feature": "weekday_Sat",
+    "importance": 0.0
+  },
+  {
+    "rank": 46,
+    "feature": "weekday_Sun",
+    "importance": 0.0
+  },
+  {
+    "rank": 47,
+    "feature": "weekday_Thu",
+    "importance": 0.0
+  },
+  {
+    "rank": 48,
+    "feature": "weekday_Tue",
+    "importance": 0.0
+  },
+  {
+    "rank": 49,
+    "feature": "weekday_Wed",
+    "importance": 0.0
+  },
+  {
+    "rank": 50,
+    "feature": "month_Dec",
+    "importance": 0.0
+  },
+  {
+    "rank": 51,
+    "feature": "weekend_no",
+    "importance": 0.0
+  },
+  {
+    "rank": 52,
+    "feature": "weekend_yes",
+    "importance": 0.0
+  }
+]
